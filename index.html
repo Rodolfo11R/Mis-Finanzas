@@ -296,7 +296,7 @@
                 
                 { id: 'brayan', nom: 'Brayan (Me debe)', tipo: 'cobrar', s: 15000, ic: 'fa-user', col: 'text-orange-500' },
                 { id: 'telefono', nom: 'Persona Teléfono (Me debe)', tipo: 'cobrar', s: 8000, ic: 'fa-mobile', col: 'text-blue-400' },
-                { id: 'acordeon', nom: 'Acordeón (Me deben)', tipo: 'cobrar', s: 0, ic: 'fa-music', col: 'text-slate-700' },
+                { id: 'acordeon', nom: 'Acordeón (Me deben)', tipo: 'cobrar', s: 3500, ic: 'fa-music', col: 'text-slate-700' },
                 
                 { id: 'carro', nom: 'Ahorro Carro', tipo: 'meta', s: 0, ic: 'fa-car', col: 'text-slate-700' }
             ],
@@ -313,7 +313,7 @@
         };
 
         // LLAVES DE VERSIÓN PARA FORZAR EL NUEVO STATE
-        const V = "v5";
+        const V = "v6";
         let st = {
             c: localStorage.getItem(`fr_c_${V}`) ? JSON.parse(localStorage.getItem(`fr_c_${V}`)) : DEFAULTS.cuentas,
             tx: JSON.parse(localStorage.getItem('fr_tx')) || [],
