@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Estas líneas hacen que en iPhone se vea como App Real -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mis Finanzas">
+    <title>Finanzas Pro + IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .chart-container { position: relative; height: 200px; width: 100%; }
+        /* Estilo para que parezca app nativa en iOS */
+        @media (display-mode: standalone) {
+            body { padding-top: env(safe-area-inset-top); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-20 sm:pb-0">
+
+    <div class="max-w-6xl mx-auto p-4 sm:p-6">
+        <header class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 flex items-center">
+                    <span class="bg-blue-600 text-white p-2 rounded-lg mr-3 shadow-lg shadow-blue-200">
+                        <i class="fa-solid fa-vault"></i>
+                    </span>
+                    Finanzas Pro
+                </h1>
+            </div>
+            <div class="mt-4 sm:mt-0 flex gap-2 w-full sm:w-auto">
+                <button onclick="exportarCSV()" class="flex-1 sm:flex-none bg-slate-100 text-slate-700 px-3 py-2 rounded-xl hover:bg-slate-200 transition text-sm font-bold">
+                    <i class="fa-solid fa-file-excel mr-1"></i> Excel
+                </button>
+                <button onclick="consultarAsesorIA()" class="flex-1 sm:flex-none bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition text-sm font-bold flex items-center justify-center">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Asesor IA
+                </button>
+            </div>
+        </header>
+
+        <!-- DASHBOARD PRINCIPAL -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div class="col-span-2 sm:col-span-1 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg p-5 text-white">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-100 opacity-80">Dinero Libre</h3>
+                <p class="text-3xl font-black mt-1" id="dinero-libre">$0.00</p>
+                <p class="text-[10px] mt-2 bg-emerald-400/30 inline-block px-2 py-1 rounded-full">Listo para gastar</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-100">
+                <h3 class="text-xs font-bold text-slate-400 uppercase">Mis Ahorros</h3>
+                <p class="text-xl font-bold text-blue-600 mt-1" id="total-ahorros">$0.00</p>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3">
+                    <div class="bg-blue-500 h-full rounded-full" style="width: 70%"></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-100">
+                <h3 class="text-xs font-bold text-slate-400 uppercase">Mis Deudas</h3>
+                <p class="text-xl font-bold text-red-500 mt-1" id="total-deudas">$0.00</p>
+                <p class="text-[10px] text-slate-400 mt-2">Tarjetas y préstamos</p>
+            </div>
+            <div class="bg-slate-900 rounded-2xl shadow-sm p-4 text-white">
+                 <h3 class="text-xs font-bold text-slate-500 uppercase">Patrimonio</h3>
+                 <p class="text-xl font-bold mt-1" id="balance-total">$0.00</p>
+                 <p class="text-[10px] text-slate-500 mt-2">Valor real de tu lana</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- COLUMNA IZQUIERDA: FORMULARIO Y CUENTAS -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Termómetro de Cosas Mensas -->
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-sm font-black uppercase text-slate-700">Presupuesto "Cosas Mensas"</h2>
+                        <button onclick="configurarPresupuesto()" class="text-xs text-blue-600 hover:underline">Ajustar</button>
+                    </div>
+                    <div class="relative pt-1">
+                        <div class="flex mb-2 items-center justify-between">
+                            <div>
+                                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-600 bg-indigo-100" id="badge-presupuesto">Manejable</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold inline-block text-slate-600" id="texto-presupuesto">0%</span>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden h-3 mb-1 text-xs flex rounded-full bg-slate-100">
+                            <div id="barra-presupuesto" style="width:0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500 transition-all duration-500"></div>
+                        </div>
+                        <p class="text-[10px] text-slate-400" id="ayuda-presupuesto">Has gastado $0 de tu límite mensual.</p>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <div class="bg-white rounded-2xl shadow-sm p-6 border-t-4 border-blue-500">
+                    <h2 class="text-lg font-bold mb-4 flex items-center text-slate-800"><i class="fa-solid fa-circle-plus text-blue-500 mr-2"></i>Registrar</h2>
+                    <form id="formulario-transaccion">
+                        <div class="flex bg-slate-100 p-1 rounded-xl mb-4">
+                            <button type="button" onclick="setTipo('ingreso')" id="btn-ingreso" class="flex-1 py-2 rounded-lg font-bold text-sm transition bg-white shadow-sm text-emerald-600">Ingreso</button>
+                            <button type="button" onclick="setTipo('gasto')" id="btn-gasto" class="flex-1 py-2 rounded-lg font-bold text-sm transition text-slate-500">Gasto</button>
+                        </div>
+                        <input type="hidden" id="tipo-hidden" value="ingreso">
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">¿Qué compraste / vendiste?</label>
+                                <input type="text" id="descripcion" required placeholder="Ej. Tacos, Netflix, Sueldo..." class="w-full bg-slate-50 border-none rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Monto ($)</label>
+                                    <input type="number" id="monto" required min="0.01" step="0.01" placeholder="0.00" class="w-full bg-slate-50 border-none rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-lg font-black text-blue-700">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Categoría</label>
+                                    <select id="categoria" class="w-full bg-slate-50 border-none rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                                        <option value="Comida">🌮 Comida</option>
+                                        <option value="Vivienda">🏠 Vivienda</option>
+                                        <option value="Transporte">🚗 Transporte</option>
+                                        <option value="Servicios">⚡ Servicios</option>
+                                        <option value="Cosas Mensas" selected>🎮 Cosas Mensas</option>
+                                        <option value="Salud">💊 Salud</option>
+                                        <option value="Educación">📚 Educación</option>
+                                        <option value="Trabajo">💼 Trabajo / Sueldo</option>
+                                        <option value="Otros">🌀 Otros</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Cuenta</label>
+                                <select id="cuentaSelect" required class="w-full bg-slate-50 border-none rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-slate-900 text-white font-black py-4 rounded-xl hover:bg-black transition shadow-xl">
+                                REGISTRAR MOVIMIENTO
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Cuentas -->
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-sm font-black uppercase text-slate-700">Mis Cuentas</h2>
+                        <button onclick="abrirModalCuenta()" class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div id="lista-cuentas-sidebar" class="space-y-3">
+                        <!-- Cuentas aquí -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: GRÁFICAS E HISTORIAL -->
+            <div class="lg:col-span-8 space-y-6">
+                <!-- Gráfica de Gastos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 flex flex-col items-center border border-slate-100">
+                        <h2 class="text-sm font-black uppercase text-slate-700 mb-4 self-start">Análisis de Gastos</h2>
+                        <div class="chart-container">
+                            <canvas id="chartGastos"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm p-6 border border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-sm font-black uppercase text-slate-700">Movimientos Fijos</h2>
+                            <button onclick="aplicarRecurrentes()" class="text-xs bg-blue-600 text-white px-3 py-1 rounded-lg font-bold">Aplicar</button>
+                        </div>
+                        <div id="lista-recurrentes" class="space-y-2 max-h-40 overflow-y-auto pr-1 no-scrollbar">
+                            <!-- Fijos aquí -->
+                        </div>
+                        <button onclick="abrirModalRecurrente()" class="w-full mt-3 py-2 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 text-xs font-bold hover:border-blue-300 hover:text-blue-500 transition">
+                            + Agregar compromiso mensual
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Historial -->
+                <div class="bg-white rounded-2xl shadow-sm p-6 min-h-[500px]">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-black text-slate-800">Historial Reciente</h2>
+                        <div class="flex bg-slate-50 p-1 rounded-lg text-xs font-bold text-slate-400">
+                            <button class="px-3 py-1 bg-white shadow-sm rounded-md text-slate-800">Todos</button>
+                            <button class="px-3 py-1">Mes</button>
+                        </div>
+                    </div>
+                    <div id="lista-transacciones" class="space-y-4">
+                        <!-- Transacciones aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALES (Cuentas, Fijos, IA, Ahorro) - Manteniendo la lógica anterior pero con diseño Pro -->
+    
+    <!-- Modal Nueva Cuenta -->
+    <div id="modal-cuenta" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl scale-in-center">
+            <h3 class="text-xl font-black mb-6 text-slate-800">Nueva Cuenta o Deuda</h3>
+            <form id="form-nueva-cuenta" class="space-y-4">
+                <input type="text" id="nombre-cuenta" required placeholder="Nombre (Ej. Nomina, Tarjeta Oro)" class="w-full bg-slate-50 border-none rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none">
+                <select id="tipo-cuenta" class="w-full bg-slate-50 border-none rounded-xl p-4 outline-none">
+                    <option value="activo-efectivo">Efectivo / Banco</option>
+                    <option value="activo-ahorro">Ahorro / Inversión</option>
+                    <option value="activo-cobrar">Me Deben (Lana afuera)</option>
+                    <option value="pasivo-tarjeta">Tarjeta de Crédito (Deuda)</option>
+                    <option value="pasivo-prestamo">Préstamo personal (Debo)</option>
+                </select>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Saldo inicial / Deuda actual</label>
+                    <input type="number" id="saldo-inicial" required step="0.01" value="0.00" class="w-full bg-slate-50 border-none rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none font-bold">
+                </div>
+                <div class="flex gap-2 pt-4">
+                    <button type="button" onclick="cerrarModalCuenta()" class="flex-1 py-4 bg-slate-100 rounded-xl font-bold text-slate-500">Cancelar</button>
+                    <button type="submit" class="flex-1 py-4 bg-blue-600 rounded-xl font-bold text-white">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Recurrente -->
+    <div id="modal-recurrente" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
+            <h3 class="text-xl font-black mb-6">Nuevo Pago Fijo</h3>
+            <form id="form-nuevo-recurrente" class="space-y-4">
+                <select id="tipo-recurrente" class="w-full bg-slate-100 rounded-xl p-4 outline-none">
+                    <option value="ingreso">Es un ingreso (Sueldo)</option>
+                    <option value="gasto">Es un gasto (Renta/Internet)</option>
+                </select>
+                <input type="text" id="desc-recurrente" required placeholder="Concepto" class="w-full bg-slate-100 rounded-xl p-4 outline-none">
+                <input type="number" id="monto-recurrente" required step="0.01" placeholder="Monto" class="w-full bg-slate-100 rounded-xl p-4 outline-none font-bold">
+                <select id="cuenta-recurrente" required class="w-full bg-slate-100 rounded-xl p-4 outline-none"></select>
+                <div class="flex gap-2 pt-4">
+                    <button type="button" onclick="cerrarModalRecurrente()" class="flex-1 py-4 text-slate-400 font-bold">Cerrar</button>
+                    <button type="submit" class="flex-1 py-4 bg-indigo-600 text-white rounded-xl font-bold">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Ahorro Forzoso -->
+    <div id="modal-ahorro-forzoso" class="fixed inset-0 bg-slate-900/80 hidden flex items-center justify-center z-50 backdrop-blur-md p-4 text-center">
+        <div class="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl border-4 border-blue-500">
+            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-piggy-bank text-4xl text-blue-600"></i>
+            </div>
+            <h3 class="text-2xl font-black mb-2 italic">¡Ahorro Forzado!</h3>
+            <p class="text-slate-500 text-sm mb-6 font-medium">Acabas de ganar lana. El 10% se va al ahorro antes de que lo veas. <br><b id="ahorro-forzoso-sugerido" class="text-blue-600 text-lg"></b></p>
+            <select id="cuenta-ahorro-destino" class="w-full bg-slate-50 rounded-2xl p-4 mb-4 outline-none font-bold text-center"></select>
+            <input type="number" id="monto-ahorro-forzoso" class="hidden">
+            <button onclick="ejecutarAhorroForzoso()" class="w-full py-5 bg-blue-600 text-white rounded-3xl font-black shadow-xl shadow-blue-200 transition active:scale-95 mb-4">BLOQUEAR AHORRO</button>
+            <button onclick="saltarAhorroForzoso()" class="text-slate-300 text-xs font-bold uppercase tracking-widest hover:text-slate-500">No quiero progresar hoy</button>
+        </div>
+    </div>
+
+    <!-- Modal Asesor IA -->
+    <div id="modal-asesor" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500"></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black flex items-center"><i class="fa-solid fa-robot text-indigo-600 mr-2"></i>Asesor Financiero Pro</h3>
+                <button onclick="cerrarModalAsesor()" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="loader-asesor" class="py-10 text-center">
+                <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent mb-4"></div>
+                <p class="text-slate-400 font-bold italic">Consultando con el oráculo de tu cartera...</p>
+            </div>
+            <div id="contenido-asesor" class="hidden">
+                <div id="texto-asesor" class="text-slate-700 leading-relaxed bg-slate-50 p-6 rounded-2xl border border-slate-100 italic"></div>
+                <button onclick="cerrarModalAsesor()" class="w-full mt-6 py-4 bg-slate-900 text-white rounded-xl font-black">¡Vale, gracias!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ESTADO
+        let state = {
+            cuentas: JSON.parse(localStorage.getItem('finanzas_cuentas')) || [],
+            transacciones: JSON.parse(localStorage.getItem('finanzas_transacciones')) || [],
+            recurrentes: JSON.parse(localStorage.getItem('finanzas_recurrentes')) || [],
+            presupuestoMensas: JSON.parse(localStorage.getItem('presupuesto_mensas')) || 2000
+        };
+
+        let chartInstancia = null;
+
+        // INICIO
+        function init() {
+            if (state.cuentas.length === 0) {
+                state.cuentas.push({ id: generarID(), nombre: 'Efectivo', tipo: 'activo-efectivo', saldoInicial: 0, saldoActual: 0 });
+                guardarDatos();
+            }
+            recalcularSaldosCuentas();
+            actualizarUI();
+        }
+
+        function setTipo(tipo) {
+            document.getElementById('tipo-hidden').value = tipo;
+            const btnIngreso = document.getElementById('btn-ingreso');
+            const btnGasto = document.getElementById('btn-gasto');
+            
+            if(tipo === 'ingreso') {
+                btnIngreso.classList.add('bg-white', 'shadow-sm', 'text-emerald-600');
+                btnGasto.classList.remove('bg-white', 'shadow-sm', 'text-red-600');
+                btnGasto.classList.add('text-slate-500');
+            } else {
+                btnGasto.classList.add('bg-white', 'shadow-sm', 'text-red-600');
+                btnIngreso.classList.remove('bg-white', 'shadow-sm', 'text-emerald-600');
+                btnIngreso.classList.add('text-slate-500');
+            }
+        }
+
+        function actualizarUI() {
+            renderizarSelectCuentas();
+            renderizarListaCuentas();
+            renderizarRecurrentes();
+            renderizarTransacciones();
+            actualizarTarjetasDashboard();
+            actualizarGrafica();
+            actualizarTermometro();
+        }
+
+        function actualizarTermometro() {
+            const gastadoMensas = state.transacciones
+                .filter(t => t.tipo === 'gasto' && t.categoria === 'Cosas Mensas')
+                .reduce((acc, t) => acc + t.monto, 0);
+            
+            const porcentaje = Math.min((gastadoMensas / state.presupuestoMensas) * 100, 100);
+            const barra = document.getElementById('barra-presupuesto');
+            const texto = document.getElementById('texto-presupuesto');
+            const ayuda = document.getElementById('ayuda-presupuesto');
+            const badge = document.getElementById('badge-presupuesto');
+
+            barra.style.width = porcentaje + '%';
+            texto.innerText = Math.round(porcentaje) + '%';
+            ayuda.innerText = `Has gastado ${formatMoneda(gastadoMensas)} de tu límite de ${formatMoneda(state.presupuestoMensas)}.`;
+
+            if(porcentaje > 90) {
+                barra.className = barra.className.replace(/bg-\w+-\d+/, 'bg-red-500');
+                badge.innerText = "¡PELIGRO!";
+                badge.className = badge.className.replace(/bg-\w+-\d+/, 'bg-red-100').replace(/text-\w+-\d+/, 'text-red-600');
+            } else if (porcentaje > 50) {
+                barra.className = barra.className.replace(/bg-\w+-\d+/, 'bg-orange-400');
+                badge.innerText = "Cuidado";
+                badge.className = badge.className.replace(/bg-\w+-\d+/, 'bg-orange-100').replace(/text-\w+-\d+/, 'text-orange-600');
+            } else {
+                barra.className = barra.className.replace(/bg-\w+-\d+/, 'bg-indigo-500');
+                badge.innerText = "Manejable";
+                badge.className = badge.className.replace(/bg-\w+-\d+/, 'bg-indigo-100').replace(/text-\w+-\d+/, 'text-indigo-600');
+            }
+        }
+
+        function configurarPresupuesto() {
+            const nuevo = prompt("¿Cuánto es tu límite mensual para 'Cosas Mensas'?", state.presupuestoMensas);
+            if(nuevo !== null) {
+                state.presupuestoMensas = parseFloat(nuevo);
+                localStorage.setItem('presupuesto_mensas', JSON.stringify(state.presupuestoMensas));
+                actualizarTermometro();
+            }
+        }
+
+        function actualizarGrafica() {
+            const ctx = document.getElementById('chartGastos').getContext('2d');
+            const gastosPorCat = {};
+            
+            state.transacciones.filter(t => t.tipo === 'gasto').forEach(t => {
+                gastosPorCat[t.categoria] = (gastosPorCat[t.categoria] || 0) + t.monto;
+            });
+
+            const labels = Object.keys(gastosPorCat);
+            const data = Object.values(gastosPorCat);
+
+            if(chartInstancia) chartInstancia.destroy();
+
+            chartInstancia = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#6366f1', '#f43f5e', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#94a3b8'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: 'bold' } } }
+                    }
+                }
+            });
+        }
+
+        // Lógica de Negocio básica (Saldos)
+        function recalcularSaldosCuentas() {
+            state.cuentas.forEach(c => c.saldoActual = c.saldoInicial);
+            state.transacciones.forEach(tx => {
+                let c = state.cuentas.find(cu => cu.id === tx.cuentaId);
+                if (c) {
+                    const esActivo = c.tipo.startsWith('activo');
+                    if (tx.tipo === 'ingreso') c.saldoActual += esActivo ? tx.monto : -tx.monto;
+                    else if (tx.tipo === 'gasto') c.saldoActual += esActivo ? -tx.monto : tx.monto;
+                }
+            });
+        }
+
+        function actualizarTarjetasDashboard() {
+            let liq = 0, aho = 0, cob = 0, deu = 0;
+            state.cuentas.forEach(c => {
+                if (c.tipo === 'activo-efectivo') liq += c.saldoActual;
+                else if (c.tipo === 'activo-ahorro') aho += c.saldoActual;
+                else if (c.tipo === 'activo-cobrar') cob += c.saldoActual;
+                else if (c.tipo.startsWith('pasivo')) deu += c.saldoActual;
+            });
+            document.getElementById('dinero-libre').innerText = formatMoneda(liq - deu);
+            document.getElementById('total-ahorros').innerText = formatMoneda(aho);
+            document.getElementById('total-deudas').innerText = formatMoneda(deu);
+            document.getElementById('balance-total').innerText = formatMoneda((liq + aho + cob) - deu);
+        }
+
+        // Eventos
+        let transaccionPendiente = null;
+
+        document.getElementById('formulario-transaccion').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const tipo = document.getElementById('tipo-hidden').value;
+            const desc = document.getElementById('descripcion').value;
+            const monto = parseFloat(document.getElementById('monto').value);
+            const cat = document.getElementById('categoria').value;
+            const cuentaId = document.getElementById('cuentaSelect').value;
+
+            const cuentasAhorro = state.cuentas.filter(c => c.tipo === 'activo-ahorro');
+            if (tipo === 'ingreso' && cuentasAhorro.length > 0) {
+                transaccionPendiente = { tipo, desc, monto, cat, cuentaId };
+                const sug = monto * 0.10;
+                document.getElementById('ahorro-forzoso-sugerido').innerText = formatMoneda(sug);
+                document.getElementById('monto-ahorro-forzoso').value = sug;
+                const sel = document.getElementById('cuenta-ahorro-destino');
+                sel.innerHTML = cuentasAhorro.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+                document.getElementById('modal-ahorro-forzoso').classList.remove('hidden');
+                return;
+            }
+            registrarTransaccion(tipo, desc, monto, cuentaId, cat);
+            this.reset();
+        });
+
+        function saltarAhorroForzoso() {
+            registrarTransaccion(transaccionPendiente.tipo, transaccionPendiente.desc, transaccionPendiente.monto, transaccionPendiente.cuentaId, transaccionPendiente.cat);
+            document.getElementById('modal-ahorro-forzoso').classList.add('hidden');
+            document.getElementById('formulario-transaccion').reset();
+        }
+
+        function ejecutarAhorroForzoso() {
+            const sug = parseFloat(document.getElementById('monto-ahorro-forzoso').value);
+            const dest = document.getElementById('cuenta-ahorro-destino').value;
+            registrarTransaccion(transaccionPendiente.tipo, transaccionPendiente.desc, transaccionPendiente.monto, transaccionPendiente.cuentaId, transaccionPendiente.cat);
+            registrarTransaccion('gasto', 'Ahorro Automático', sug, transaccionPendiente.cuentaId, 'Ahorro');
+            registrarTransaccion('ingreso', 'Ahorro desde Ingreso', sug, dest, 'Ahorro');
+            document.getElementById('modal-ahorro-forzoso').classList.add('hidden');
+            document.getElementById('formulario-transaccion').reset();
+        }
+
+        function registrarTransaccion(tipo, desc, monto, cuentaId, categoria = "Otros") {
+            state.transacciones.unshift({ id: generarID(), tipo, descripcion: desc, monto, cuentaId, categoria, fecha: new Date().toLocaleDateString() });
+            recalcularSaldosCuentas();
+            guardarDatos();
+            actualizarUI();
+        }
+
+        // Renderizadores
+        function renderizarTransacciones() {
+            const cont = document.getElementById('lista-transacciones');
+            cont.innerHTML = state.transacciones.slice(0, 10).map(t => `
+                <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl group transition hover:bg-slate-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center mr-3">
+                            <i class="fa-solid ${t.tipo === 'ingreso' ? 'fa-arrow-down text-emerald-500' : 'fa-arrow-up text-red-400'}"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold">${t.descripcion}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">${t.categoria} &bull; ${t.fecha}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm font-black ${t.tipo === 'ingreso' ? 'text-emerald-600' : 'text-slate-800'}">${t.tipo === 'ingreso' ? '+' : '-'}${formatMoneda(t.monto)}</span>
+                        <button onclick="eliminarTx('${t.id}')" class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-center text-slate-300 py-10 font-bold italic">Nada por aquí aún...</p>';
+        }
+
+        function renderizarListaCuentas() {
+            const cont = document.getElementById('lista-cuentas-sidebar');
+            cont.innerHTML = state.cuentas.map(c => `
+                <div class="flex justify-between items-center p-3 rounded-xl border border-slate-50">
+                    <div class="flex items-center gap-3">
+                        <div class="text-slate-400 text-sm">
+                            <i class="fa-solid ${c.tipo.startsWith('pasivo') ? 'fa-credit-card' : 'fa-wallet'}"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-700">${c.nombre}</span>
+                    </div>
+                    <span class="text-xs font-black ${c.tipo.startsWith('pasivo') ? 'text-red-500' : 'text-slate-900'}">${formatMoneda(c.saldoActual)}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderizarSelectCuentas() {
+            const html = state.cuentas.map(c => `<option value="${c.id}">${c.nombre} (${formatMoneda(c.saldoActual)})</option>`).join('');
+            document.getElementById('cuentaSelect').innerHTML = html;
+            document.getElementById('cuenta-recurrente').innerHTML = html;
+        }
+
+        function renderizarRecurrentes() {
+            document.getElementById('lista-recurrentes').innerHTML = state.recurrentes.map(r => `
+                <div class="text-xs p-2 bg-slate-50 rounded-lg flex justify-between items-center">
+                    <span class="font-bold text-slate-600 truncate mr-2">${r.descripcion}</span>
+                    <span class="font-black ${r.tipo === 'ingreso' ? 'text-emerald-600' : 'text-red-400'}">${formatMoneda(r.monto)}</span>
+                </div>
+            `).join('') || '<p class="text-[10px] text-slate-300 italic">Sin fijos.</p>';
+        }
+
+        // Extras
+        function exportarCSV() {
+            let csv = "Fecha,Tipo,Concepto,Categoria,Monto\n";
+            state.transacciones.forEach(t => {
+                csv += `${t.fecha},${t.tipo},"${t.descripcion}","${t.categoria}",${t.monto}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'mis_finanzas.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        async function consultarAsesorIA() {
+            const modal = document.getElementById('modal-asesor');
+            const cont = document.getElementById('contenido-asesor');
+            const load = document.getElementById('loader-asesor');
+            const txt = document.getElementById('texto-asesor');
+            
+            modal.classList.remove('hidden');
+            cont.classList.add('hidden');
+            load.classList.remove('hidden');
+
+            const liq = state.cuentas.filter(c => c.tipo === 'activo-efectivo').reduce((a, b) => a + b.saldoActual, 0);
+            const deu = state.cuentas.filter(c => c.tipo.startsWith('pasivo')).reduce((a, b) => a + b.saldoActual, 0);
+            const aho = state.cuentas.filter(c => c.tipo === 'activo-ahorro').reduce((a, b) => a + b.saldoActual, 0);
+            const mensas = state.transacciones.filter(t => t.tipo === 'gasto' && t.categoria === 'Cosas Mensas').reduce((a, b) => a + b.monto, 0);
+
+            const prompt = `Dinero Libre: $${liq - deu}, Deudas: $${deu}, Ahorros: $${aho}, Gastado en Cosas Mensas este mes: $${mensas}. Dame un consejo financiero pro y amigable.`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: { parts: [{ text: "Eres un asesor financiero experto de México, súper 'pro', directo y amigable. Usa expresiones como 'lana', 'date un gusto' o 'aguas con la deuda'. Máximo 2 párrafos." }] }
+                    })
+                });
+                const result = await response.json();
+                txt.innerHTML = result.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                load.classList.add('hidden');
+                cont.classList.remove('hidden');
+            } catch (e) {
+                txt.innerHTML = "No pude leer tus cartas hoy. ¡Checa tu internet!";
+                load.classList.add('hidden');
+                cont.classList.remove('hidden');
+            }
+        }
+
+        // Utilidades finales
+        function generarID() { return Math.random().toString(36).substr(2, 9); }
+        function formatMoneda(n) { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n); }
+        function guardarDatos() {
+            localStorage.setItem('finanzas_cuentas', JSON.stringify(state.cuentas));
+            localStorage.setItem('finanzas_transacciones', JSON.stringify(state.transacciones));
+            localStorage.setItem('finanzas_recurrentes', JSON.stringify(state.recurrentes));
+        }
+        function abrirModalCuenta() { document.getElementById('modal-cuenta').classList.remove('hidden'); }
+        function cerrarModalCuenta() { document.getElementById('modal-cuenta').classList.add('hidden'); }
+        function abrirModalRecurrente() { document.getElementById('modal-recurrente').classList.remove('hidden'); }
+        function cerrarModalRecurrente() { document.getElementById('modal-recurrente').classList.add('hidden'); }
+        function cerrarModalAsesor() { document.getElementById('modal-asesor').classList.add('hidden'); }
+        function eliminarTx(id) { state.transacciones = state.transacciones.filter(t => t.id !== id); recalcularSaldosCuentas(); guardarDatos(); actualizarUI(); }
+
+        init();
+    </script>
+</body>
+</html>
