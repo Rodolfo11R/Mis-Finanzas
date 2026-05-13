@@ -6,13 +6,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanzas Rodolfo">
-    <title>Finanzas Rodolfo | Ultimate</title>
+    <title>Finanzas Rodolfo | Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --accent: #2563eb; --bg: #f1f5f9; }
+        :root { --bg: #f1f5f9; }
         body { font-family: 'Outfit', sans-serif; background-color: var(--bg); -webkit-tap-highlight-color: transparent; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
@@ -68,7 +68,7 @@
                     </span>
                     Finanzas Rodolfo
                 </h1>
-                <p class="text-slate-400 text-xs font-bold ml-12 uppercase tracking-widest mt-1">Nómina, Deudas y Cobranza</p>
+                <p class="text-slate-400 text-xs font-bold ml-12 uppercase tracking-widest mt-1">Control de Deudas y Patrimonio</p>
             </div>
             <div class="mt-4 sm:mt-0 flex gap-3 w-full sm:w-auto">
                 <button onclick="editarSaldos()" class="flex-1 sm:flex-none bg-amber-100 text-amber-700 px-5 py-3 rounded-2xl hover:bg-amber-200 transition text-xs font-black flex items-center justify-center uppercase tracking-widest">
@@ -81,35 +81,34 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div class="col-span-2 sm:col-span-1 bg-blue-600 rounded-[2rem] shadow-xl p-6 text-white relative overflow-hidden">
                 <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
-                <h3 class="text-xs font-bold uppercase tracking-widest text-blue-100 opacity-80">Efectivo Disponible</h3>
+                <h3 class="text-xs font-bold uppercase tracking-widest text-blue-100 opacity-80">Capital Disponible</h3>
                 <p class="text-3xl font-black mt-2 tracking-tighter" id="dinero-libre">$0.00</p>
-                <p class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-1 rounded-lg font-bold">Lana en Bancos/Bolsillo</p>
+                <p class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-1 rounded-lg font-bold">Total en bancos/efectivo</p>
             </div>
             
             <div class="bg-white rounded-[2rem] card-shadow p-6 border border-slate-100">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Me Deben</h3>
                 <p class="text-2xl font-black text-emerald-600 mt-1" id="total-cobrar">$0.00</p>
-                <p class="text-[10px] text-slate-400 mt-2 font-medium">Novia, Bluu, Brayan...</p>
+                <p class="text-[10px] text-slate-400 mt-2 font-medium">Brayan, Teléfono, Acordeón...</p>
             </div>
 
             <div class="bg-white rounded-[2rem] card-shadow p-6 border border-slate-100">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Yo Debo</h3>
                 <p class="text-2xl font-black text-rose-500 mt-1" id="total-deudas">$0.00</p>
-                <p class="text-[10px] text-slate-400 mt-2 font-medium">Tarjetas, Préstamos y Tiendas</p>
+                <p class="text-[10px] text-slate-400 mt-2 font-medium">Mamá, Liverpool, Tarjetas</p>
             </div>
 
             <div class="bg-slate-900 rounded-[2rem] card-shadow p-6 text-white relative overflow-hidden">
                 <i class="fa-solid fa-chart-line absolute -right-2 -bottom-2 text-6xl opacity-10"></i>
                 <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Patrimonio Neto</h3>
                 <p class="text-2xl font-black mt-1 tracking-tighter" id="balance-total">$0.00</p>
-                <p class="text-[10px] text-blue-400 mt-2 font-bold italic">Valor real de tu imperio</p>
+                <p class="text-[10px] text-blue-400 mt-2 font-bold italic">Capital + Cobranza - Deudas</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- PANEL IZQUIERDO: ACCIÓN -->
+            <!-- PANEL IZQUIERDO -->
             <div class="lg:col-span-5 space-y-6">
-                
                 <!-- REGISTRO -->
                 <div class="bg-white rounded-[2.5rem] card-shadow p-8 border-t-8 border-blue-600">
                     <h2 class="text-xl font-black mb-6 text-slate-800">Registrar Movimiento</h2>
@@ -123,25 +122,23 @@
                         
                         <div class="space-y-4">
                             <div>
-                                <input type="text" id="tx-desc" required placeholder="Concepto (Ej. Comida, Grupo, Abono...)" class="w-full bg-slate-50 border-none rounded-2xl p-4 font-bold outline-none">
+                                <input type="text" id="tx-desc" required placeholder="Concepto (Ej. Tacos, Grupo, Marketing...)" class="w-full bg-slate-50 border-none rounded-2xl p-4 font-bold outline-none">
                             </div>
                             <div class="flex gap-4">
                                 <input type="number" id="tx-monto" required min="0.01" step="0.01" placeholder="$ Monto" class="w-1/2 bg-slate-50 border-none rounded-2xl p-4 text-lg font-black text-blue-600 outline-none">
                                 <select id="tx-cat" class="w-1/2 bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold outline-none">
                                     <option value="Comida">🌮 Comida</option>
+                                    <option value="Servicios">📱 Servicios</option>
+                                    <option value="Equipo">💻 Equipo</option>
+                                    <option value="Deudas">💳 Abono Deuda</option>
+                                    <option value="Nómina">💼 Nómina/Bono</option>
                                     <option value="Grupo Musical">🎸 Grupo Musical</option>
-                                    <option value="Vivienda">🏠 Vivienda / Renta</option>
-                                    <option value="Servicios">📱 Servicios / Cel</option>
-                                    <option value="Equipo">💻 Equipo / PC</option>
-                                    <option value="Deudas">💳 Pago Deuda</option>
-                                    <option value="Tanda">💰 Tanda / Ahorro</option>
-                                    <option value="Nómina">💼 Nómina / Bono</option>
+                                    <option value="Marketing">🚀 Marketing/Freelance</option>
                                     <option value="Cosas Mensas">🎮 Cosas Mensas</option>
                                     <option value="Otros">🌀 Otros</option>
                                 </select>
                             </div>
 
-                            <!-- Dinámicos según tipo -->
                             <div id="bloque-origen" class="block">
                                 <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-origen">Salió de / Pagué con:</label>
                                 <select id="tx-origen" class="w-full bg-slate-50 rounded-2xl p-4 text-sm font-bold outline-none"></select>
@@ -160,33 +157,59 @@
 
                 <!-- CUENTAS -->
                 <div class="bg-white rounded-[2.5rem] card-shadow p-8">
-                    <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-6">Mis Cuentas & Deudas</h2>
-                    <div id="lista-cuentas" class="space-y-3 max-h-[400px] overflow-y-auto pr-2 no-scrollbar"></div>
+                    <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-6">Estado de mis Cuentas</h2>
+                    <div id="lista-cuentas" class="space-y-3 max-h-[500px] overflow-y-auto pr-2 no-scrollbar"></div>
                 </div>
             </div>
 
-            <!-- PANEL DERECHO: ANALÍTICA Y AUTO -->
+            <!-- PANEL DERECHO -->
             <div class="lg:col-span-7 space-y-8">
                 
+                <!-- INTELIGENCIA FINANCIERA -->
+                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2.5rem] card-shadow p-8 text-white relative overflow-hidden">
+                    <i class="fa-solid fa-brain absolute -right-10 -bottom-10 text-9xl opacity-5"></i>
+                    <h2 class="text-sm font-black uppercase text-indigo-300 tracking-widest mb-6"><i class="fa-solid fa-bolt mr-2"></i> Análisis Inteligente de tu Deuda</h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white/10 rounded-2xl p-5 backdrop-blur-md border border-white/10">
+                            <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest">Ingreso Fijo (Mensual)</p>
+                            <p class="text-2xl font-black text-emerald-400 mt-1" id="ai-ingresos">$0</p>
+                        </div>
+                        <div class="bg-white/10 rounded-2xl p-5 backdrop-blur-md border border-white/10">
+                            <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest">Gasto Fijo (Mensual)</p>
+                            <p class="text-2xl font-black text-rose-400 mt-1" id="ai-gastos">$0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white/5 rounded-2xl p-5 backdrop-blur-md">
+                        <p class="text-xs font-bold text-indigo-200 mb-3 uppercase tracking-widest">Proyección de Deudas Mayores:</p>
+                        <div id="ai-proyeccion" class="space-y-3">
+                            <!-- Generado dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- GRAFICO -->
                     <div class="bg-white rounded-[2.5rem] card-shadow p-8 flex flex-col items-center">
-                        <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-4 self-start">Distribución Gastos</h2>
+                        <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-4 self-start">Gastos x Categoría</h2>
                         <div class="w-full h-48 relative"><canvas id="chartGastos"></canvas></div>
                     </div>
 
+                    <!-- AUTOMATIZACION -->
                     <div class="bg-white rounded-[2.5rem] card-shadow p-8 border border-blue-50 relative overflow-hidden">
                         <div class="absolute -right-4 -top-4 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center opacity-50"><i class="fa-solid fa-robot text-blue-500"></i></div>
-                        <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-4">Automatización</h2>
-                        <p class="text-xs text-slate-500 font-medium mb-4">La app revisa tus ingresos de nómina y pagos fijos (como la PC, Mamá, Renta) y los aplica solos los viernes o el día del mes correspondiente.</p>
+                        <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-4">Pagos Automáticos</h2>
+                        <p class="text-xs text-slate-500 font-medium mb-4">Estos movimientos se ejecutan solos el día indicado para ahorrarte trabajo.</p>
                         <div id="lista-programados" class="space-y-2 mb-4 w-full"></div>
                         <button onclick="abrirModalAuto()" class="w-full py-3 bg-blue-100 text-blue-600 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-blue-200 transition"><i class="fa-solid fa-plus mr-2"></i>Añadir Fijo Automático</button>
                     </div>
                 </div>
 
                 <!-- HISTORIAL -->
-                <div class="bg-white rounded-[2.5rem] card-shadow p-8 min-h-[400px]">
+                <div class="bg-white rounded-[2.5rem] card-shadow p-8 min-h-[300px]">
                     <div class="flex justify-between items-center mb-8">
-                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Actividad Reciente</h2>
+                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Historial</h2>
                         <div class="flex bg-slate-100 p-1 rounded-xl text-[10px] font-black uppercase tracking-widest">
                             <button id="f-tod" onclick="filtrar('tod')" class="px-3 py-2 bg-white shadow-sm rounded-lg text-slate-900">Todos</button>
                             <button id="f-mes" onclick="filtrar('mes')" class="px-3 py-2 text-slate-400">Mes</button>
@@ -203,11 +226,7 @@
         <div class="bg-white rounded-[3rem] p-8 max-w-lg w-full shadow-2xl h-[80vh] flex flex-col animate-in">
             <h3 class="text-2xl font-black mb-2 text-slate-900 italic">Ajuste de Saldos Reales</h3>
             <p class="text-xs text-slate-500 font-medium mb-6">Mete las cantidades exactas de cuánto tienes, cuánto debes y cuánto te deben hoy.</p>
-            
-            <div class="flex-1 overflow-y-auto space-y-4 pr-2 no-scrollbar" id="form-saldos-container">
-                <!-- Inputs inyectados -->
-            </div>
-
+            <div class="flex-1 overflow-y-auto space-y-4 pr-2 no-scrollbar" id="form-saldos-container"></div>
             <div class="flex gap-4 pt-6 mt-4 border-t border-slate-100">
                 <button type="button" onclick="cerrarModalSaldos()" class="flex-1 py-4 bg-slate-100 rounded-2xl font-black text-slate-500 uppercase tracking-widest text-xs">Cancelar</button>
                 <button type="button" onclick="guardarSaldos()" class="flex-1 py-4 bg-blue-600 rounded-2xl font-black text-white uppercase tracking-widest text-xs shadow-lg shadow-blue-200">Guardar Todo</button>
@@ -218,16 +237,16 @@
     <!-- MODAL NUEVO AUTOMÁTICO -->
     <div id="modal-auto" class="fixed inset-0 bg-slate-950/80 hidden flex items-center justify-center z-[100] backdrop-blur-xl p-4">
         <div class="bg-white rounded-[3rem] p-8 max-w-lg w-full shadow-2xl h-[80vh] flex flex-col animate-in">
-            <h3 class="text-2xl font-black mb-2 text-slate-900 italic">Programar Movimiento Fijo</h3>
-            <p class="text-xs text-slate-500 font-medium mb-6">Este movimiento se aplicará solo cada semana o cada mes.</p>
+            <h3 class="text-2xl font-black mb-2 text-slate-900 italic">Programar Movimiento</h3>
+            <p class="text-xs text-slate-500 font-medium mb-6">Aplica abonos o ingresos cada semana/mes de forma automática.</p>
             
             <form id="form-auto" class="flex-1 overflow-y-auto space-y-4 pr-2 no-scrollbar">
                 <select id="auto-tipo" class="w-full bg-slate-50 rounded-2xl p-4 font-bold outline-none" onchange="setTipoAuto(this.value)">
-                    <option value="gasto">Gasto (Baja tu banco / Sube deuda)</option>
-                    <option value="ingreso">Ingreso (Entra a tu banco)</option>
-                    <option value="traspaso">Traspaso / Abono (De una a otra)</option>
+                    <option value="gasto">Gasto Fijo (Servicios, Rentas)</option>
+                    <option value="ingreso">Ingreso Fijo (Sueldos, Bonos)</option>
+                    <option value="traspaso">Traspaso / Abono a Deuda (Ej. Pago Liverpool)</option>
                 </select>
-                <input type="text" id="auto-desc" required placeholder="Concepto (Ej. Pago Liverpool, Abono Bluu)" class="w-full bg-slate-50 rounded-2xl p-4 font-bold outline-none">
+                <input type="text" id="auto-desc" required placeholder="Concepto (Ej. Abono Liverpool Tele)" class="w-full bg-slate-50 rounded-2xl p-4 font-bold outline-none">
                 <input type="number" id="auto-monto" required min="0.01" step="0.01" placeholder="$ Monto Exacto" class="w-full bg-slate-50 rounded-2xl p-4 font-black text-blue-600 outline-none">
                 
                 <div class="flex gap-4">
@@ -235,22 +254,22 @@
                         <option value="men">Mensual</option>
                         <option value="sem">Semanal</option>
                     </select>
-                    <input type="number" id="auto-dia" required min="1" max="31" placeholder="Día del mes (1 al 31)" class="w-1/2 bg-slate-50 rounded-2xl p-4 font-bold outline-none">
+                    <input type="number" id="auto-dia" required min="1" max="31" placeholder="Día (1 al 31)" class="w-1/2 bg-slate-50 rounded-2xl p-4 font-bold outline-none">
                 </div>
 
                 <div id="bloque-auto-origen" class="block">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-auto-origen">Origen / De dónde sale:</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-auto-origen">Origen / Sale de:</label>
                     <select id="auto-origen" class="w-full bg-slate-50 rounded-2xl p-4 text-sm font-bold outline-none"></select>
                 </div>
                 <div id="bloque-auto-destino" class="hidden">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-auto-destino">Destino / A dónde entra:</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-auto-destino">Destino / Paga a:</label>
                     <select id="auto-destino" class="w-full bg-slate-50 rounded-2xl p-4 text-sm font-bold outline-none"></select>
                 </div>
             </form>
 
             <div class="flex gap-4 pt-6 mt-4 border-t border-slate-100">
                 <button type="button" onclick="document.getElementById('modal-auto').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-black text-slate-500 uppercase tracking-widest text-xs">Cancelar</button>
-                <button type="button" onclick="guardarAuto()" class="flex-1 py-4 bg-blue-600 rounded-2xl font-black text-white uppercase tracking-widest text-xs shadow-lg shadow-blue-200">Programar</button>
+                <button type="button" onclick="guardarAuto()" class="flex-1 py-4 bg-blue-600 rounded-2xl font-black text-white uppercase tracking-widest text-xs shadow-lg shadow-blue-200">Guardar Fijo</button>
             </div>
         </div>
     </div>
@@ -258,49 +277,57 @@
     <script>
         const PIN = "1979";
         
-        // BASE DE DATOS INICIAL
+        // DEFAULTS ACTUALIZADOS 100% PARA RODOLFO
         const DEFAULTS = {
             cuentas: [
-                { id: 'banorte', nom: 'Banorte', tipo: 'banco', s: 0, ic: 'fa-building-columns', col: 'text-rose-600' },
+                { id: 'banorte', nom: 'Banorte Móvil', tipo: 'banco', s: 0, ic: 'fa-building-columns', col: 'text-rose-600' },
                 { id: 'efectivo', nom: 'Efectivo', tipo: 'banco', s: 0, ic: 'fa-money-bill', col: 'text-emerald-600' },
                 { id: 'spin', nom: 'Spin by Oxxo', tipo: 'banco', s: 0, ic: 'fa-store', col: 'text-green-500' },
-                { id: 'mp', nom: 'Mercado Pago', tipo: 'banco', s: 0, ic: 'fa-handshake', col: 'text-blue-500' },
                 { id: 'caja', nom: 'Caja Popular', tipo: 'banco', s: 0, ic: 'fa-piggy-bank', col: 'text-teal-600' },
                 
-                { id: 'klar', nom: 'Klar (Fin de mes)', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-slate-800' },
-                { id: 'nu', nom: 'Nu (Fin de mes)', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-purple-600' },
-                { id: 'plata', nom: 'Plata (Fin de mes)', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-slate-500' },
+                { id: 'nu', nom: 'Nu (Deuda)', tipo: 'tarjeta', s: 2063.74, ic: 'fa-credit-card', col: 'text-purple-600' },
+                { id: 'plata', nom: 'Plata (Deuda)', tipo: 'tarjeta', s: 5500, ic: 'fa-credit-card', col: 'text-slate-500' },
+                { id: 'mp', nom: 'Mercado Pago (Deuda)', tipo: 'tarjeta', s: 850, ic: 'fa-handshake', col: 'text-blue-500' },
                 
-                { id: 'liverpool', nom: 'Liverpool (Julio / Fin mes)', tipo: 'deuda', s: 0, ic: 'fa-bag-shopping', col: 'text-pink-600' },
-                { id: 'coppel', nom: 'Coppel', tipo: 'deuda', s: 0, ic: 'fa-store', col: 'text-yellow-500' },
-                { id: 'mama', nom: 'Préstamo Mamá', tipo: 'deuda', s: 0, ic: 'fa-person-breastfeeding', col: 'text-rose-400' },
+                { id: 'liverpool', nom: 'Liverpool (Deuda)', tipo: 'deuda', s: 11619, ic: 'fa-bag-shopping', col: 'text-pink-600' },
+                { id: 'coppel', nom: 'Coppel (Deuda)', tipo: 'deuda', s: 105, ic: 'fa-store', col: 'text-yellow-500' },
+                { id: 'mama_gral', nom: 'Préstamo Mamá', tipo: 'deuda', s: 17000, ic: 'fa-person-breastfeeding', col: 'text-rose-400' },
+                { id: 'mama_pc', nom: 'Préstamo Mamá (PC)', tipo: 'deuda', s: 15974, ic: 'fa-laptop', col: 'text-rose-300' },
                 
-                { id: 'novia', nom: 'Novia (PC)', tipo: 'cobrar', s: 0, ic: 'fa-heart', col: 'text-red-400' },
-                { id: 'bluu', nom: 'Bluu (PC)', tipo: 'cobrar', s: 0, ic: 'fa-user', col: 'text-blue-500' },
-                { id: 'brayan', nom: 'Brayan (PC+Watch)', tipo: 'cobrar', s: 0, ic: 'fa-user', col: 'text-orange-500' },
+                { id: 'brayan', nom: 'Brayan (Me debe)', tipo: 'cobrar', s: 15000, ic: 'fa-user', col: 'text-orange-500' },
+                { id: 'telefono', nom: 'Persona Teléfono (Me debe)', tipo: 'cobrar', s: 8000, ic: 'fa-mobile', col: 'text-blue-400' },
+                { id: 'acordeon', nom: 'Acordeón (Me deben)', tipo: 'cobrar', s: 0, ic: 'fa-music', col: 'text-slate-700' },
                 
                 { id: 'carro', nom: 'Ahorro Carro', tipo: 'meta', s: 0, ic: 'fa-car', col: 'text-slate-700' }
             ],
             prog: [
                 { id: 'p1', desc: 'Nómina Banorte', m: 2200, tipo: 'ingreso', o: '', d: 'banorte', cat: 'Nómina', fr: 'sem', dia: 5 },
                 { id: 'p2', desc: 'Bono Efectivo', m: 985, tipo: 'ingreso', o: '', d: 'efectivo', cat: 'Nómina', fr: 'sem', dia: 5 },
-                { id: 'p3', desc: 'Tanda Semanal', m: 500, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Tanda', fr: 'sem', dia: 5 },
                 
                 { id: 'p4', desc: 'Plan Celular', m: 1832, tipo: 'gasto', o: 'banorte', d: '', cat: 'Servicios', fr: 'men', dia: 4 },
                 { id: 'p5', desc: 'Renta Casa', m: 1850, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Vivienda', fr: 'men', dia: 1 },
-                { id: 'p6', desc: 'Pago PC Rodo', m: 1775, tipo: 'gasto', o: 'banorte', d: '', cat: 'Equipo', fr: 'men', dia: 15 },
-                { id: 'p7', desc: 'Abono Mamá', m: 1200, tipo: 'traspaso', o: 'banorte', d: 'mama', cat: 'Deudas', fr: 'men', dia: 30 },
-                { id: 'p8', desc: 'Abono Bluu (PC)', m: 500, tipo: 'traspaso', o: 'bluu', d: 'banorte', cat: 'Otros', fr: 'men', dia: 30 }
+                
+                { id: 'p6', desc: 'Pago PC Mamá', m: 1775, tipo: 'traspaso', o: 'banorte', d: 'mama_pc', cat: 'Equipo', fr: 'men', dia: 1 },
+                { id: 'p7', desc: 'Abono Mamá Gral', m: 1200, tipo: 'traspaso', o: 'banorte', d: 'mama_gral', cat: 'Deudas', fr: 'men', dia: 30 }
             ]
         };
 
+        // LLAVES DE VERSIÓN PARA FORZAR EL NUEVO STATE
+        const V = "v5";
         let st = {
-            c: localStorage.getItem('fr_c_v2') ? JSON.parse(localStorage.getItem('fr_c_v2')) : DEFAULTS.cuentas,
+            c: localStorage.getItem(`fr_c_${V}`) ? JSON.parse(localStorage.getItem(`fr_c_${V}`)) : DEFAULTS.cuentas,
             tx: JSON.parse(localStorage.getItem('fr_tx')) || [],
-            prog: localStorage.getItem('fr_p_v3') ? JSON.parse(localStorage.getItem('fr_p_v3')) : DEFAULTS.prog,
+            prog: localStorage.getItem(`fr_p_${V}`) ? JSON.parse(localStorage.getItem(`fr_p_${V}`)) : DEFAULTS.prog,
             lastAuto: localStorage.getItem('fr_auto') || null,
             f: 'tod'
         };
+
+        function save() {
+            localStorage.setItem(`fr_c_${V}`, JSON.stringify(st.c));
+            localStorage.setItem('fr_tx', JSON.stringify(st.tx));
+            localStorage.setItem(`fr_p_${V}`, JSON.stringify(st.prog));
+            localStorage.setItem('fr_auto', st.lastAuto);
+        }
 
         // SEGURIDAD
         let pin = "";
@@ -310,41 +337,23 @@
         function vPin() { 
             if(pin === PIN) { 
                 document.getElementById('login-screen').style.opacity = 0; 
-                document.getElementById('app-body').classList.remove('hidden');
                 setTimeout(() => { document.getElementById('login-screen').style.display = 'none'; initApp(); }, 500);
             } else { alert("PIN Incorrecto"); clearPin(); }
         }
 
-        // INIT
-        function initApp() {
-            autoProcessor();
-            updUI();
-        }
-
-        function save() {
-            localStorage.setItem('fr_c_v2', JSON.stringify(st.c));
-            localStorage.setItem('fr_tx', JSON.stringify(st.tx));
-            localStorage.setItem('fr_p_v3', JSON.stringify(st.prog));
-            localStorage.setItem('fr_auto', st.lastAuto);
-        }
-
+        function initApp() { autoProcessor(); updUI(); }
         function fmt(n) { return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n||0); }
 
-        // AUTOMATIZACIÓN INTELIGENTE
         function autoProcessor() {
             const hoy = new Date();
-            let last = st.lastAuto ? new Date(st.lastAuto) : new Date(hoy.getTime() - 86400000); // Ayer si es nuevo
-            
-            // Truco para evitar loop infinito en mismo día
+            let last = st.lastAuto ? new Date(st.lastAuto) : new Date(hoy.getTime() - 86400000); 
             if(hoy.toDateString() === last.toDateString()) return;
 
             let aplicados = 0;
-            // Recorrer días desde last hasta hoy
             let cur = new Date(last.getTime() + 86400000);
             while(cur <= hoy) {
-                const diaSem = cur.getDay(); // 0 Dom, 5 Vie
+                const diaSem = cur.getDay(); 
                 const diaMes = cur.getDate();
-
                 st.prog.forEach(p => {
                     if((p.fr === 'sem' && p.dia === diaSem) || (p.fr === 'men' && p.dia === diaMes)) {
                         ejecutarTx(p.tipo, `[AUTO] ${p.desc}`, p.m, p.o, p.d, p.cat, cur.toISOString());
@@ -355,67 +364,49 @@
             }
             st.lastAuto = hoy.toISOString();
             save();
-            if(aplicados > 0) alert(`¡El sistema automatizó ${aplicados} movimientos fijos mientras no estabas!`);
+            if(aplicados > 0) alert(`El robot aplicó ${aplicados} movimientos fijos por ti.`);
         }
 
-        // LÓGICA DE MOVIMIENTOS
         function ejecutarTx(tipo, desc, m, o, d, cat, fecha = new Date().toISOString()) {
             st.tx.unshift({ id: Date.now().toString() + Math.random(), tipo, desc, m, o, d, cat, f: fecha });
-            
-            // Afectación de saldos
             const co = st.c.find(x => x.id === o);
             const cd = st.c.find(x => x.id === d);
 
             if(tipo === 'gasto' && co) {
-                if(co.tipo === 'banco') co.s -= m; // Pierdo dinero
-                else co.s += m; // Aumenta mi deuda (tarjeta/tienda)
+                if(co.tipo === 'banco') co.s -= m; 
+                else co.s += m; // Tarjeta sube deuda
             } 
             else if(tipo === 'ingreso' && cd) {
                 if(cd.tipo === 'banco' || cd.tipo === 'meta') cd.s += m;
             }
             else if(tipo === 'traspaso' && co && cd) {
-                // Sale de origen
                 if(co.tipo === 'banco') co.s -= m;
-                else if(co.tipo === 'cobrar') co.s -= m; // Me pagaron, ya me deben menos
+                else if(co.tipo === 'cobrar') co.s -= m; // Me abonan
                 
-                // Entra a destino
                 if(cd.tipo === 'banco') cd.s += m;
-                else if(cd.tipo === 'tarjeta' || cd.tipo === 'deuda') cd.s -= m; // Pagué deuda, debo menos
+                else if(cd.tipo === 'tarjeta' || cd.tipo === 'deuda') cd.s -= m; // Pago deuda
                 else if(cd.tipo === 'meta') cd.s += m;
             }
         }
 
-        // UI HANDLERS
         function setTipoTx(t) {
             document.getElementById('tx-tipo').value = t;
             ['gasto', 'ingreso', 'traspaso'].forEach(x => {
                 document.getElementById(`btx-${x}`).className = `flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest ${x === t ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400'}`;
             });
-            
             const bo = document.getElementById('bloque-origen');
             const bd = document.getElementById('bloque-destino');
-            const lo = document.getElementById('lbl-origen');
-            const ld = document.getElementById('lbl-destino');
-
-            if(t === 'gasto') { bo.style.display='block'; bd.style.display='none'; lo.innerText='Salió de / Pagué con (Banco/Tarjeta):'; }
-            if(t === 'ingreso') { bo.style.display='none'; bd.style.display='block'; ld.innerText='Entró a (Banco):'; }
-            if(t === 'traspaso') { bo.style.display='block'; bd.style.display='block'; lo.innerText='Origen (De dónde salió):'; ld.innerText='Destino (A dónde fue / Qué pagué):'; }
+            if(t === 'gasto') { bo.style.display='block'; bd.style.display='none'; }
+            if(t === 'ingreso') { bo.style.display='none'; bd.style.display='block'; }
+            if(t === 'traspaso') { bo.style.display='block'; bd.style.display='block'; }
         }
 
         document.getElementById('form-tx').addEventListener('submit', e => {
             e.preventDefault();
-            const t = document.getElementById('tx-tipo').value;
-            const d = document.getElementById('tx-desc').value;
-            const m = parseFloat(document.getElementById('tx-monto').value);
-            const c = document.getElementById('tx-cat').value;
-            const o = document.getElementById('tx-origen').value;
-            const des = document.getElementById('tx-destino').value;
-
-            ejecutarTx(t, d, m, o, des, c);
+            ejecutarTx(document.getElementById('tx-tipo').value, document.getElementById('tx-desc').value, parseFloat(document.getElementById('tx-monto').value), document.getElementById('tx-origen').value, document.getElementById('tx-destino').value, document.getElementById('tx-cat').value);
             save(); updUI(); e.target.reset(); setTipoTx('gasto');
         });
 
-        // RENDER
         function updUI() {
             let tLib = 0, tCob = 0, tDeu = 0;
             st.c.forEach(c => {
@@ -429,7 +420,6 @@
             document.getElementById('total-deudas').innerText = fmt(tDeu);
             document.getElementById('balance-total').innerText = fmt(tLib + tCob - tDeu);
 
-            // Cuentas List
             document.getElementById('lista-cuentas').innerHTML = st.c.map(c => `
                 <div class="flex justify-between items-center p-3 rounded-2xl bg-slate-50 border border-slate-100">
                     <div class="flex items-center gap-3">
@@ -443,8 +433,7 @@
                 </div>
             `).join('');
 
-            // Selects
-            const opts = st.c.map(c => `<option value="${c.id}">${c.nom} (${fmt(c.s)})</option>`).join('');
+            const opts = st.c.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
             document.getElementById('tx-origen').innerHTML = opts;
             document.getElementById('tx-destino').innerHTML = opts;
 
@@ -454,7 +443,7 @@
                 const h = new Date();
                 fTx = st.tx.filter(x => new Date(x.f).getMonth() === h.getMonth() && new Date(x.f).getFullYear() === h.getFullYear());
             }
-            document.getElementById('lista-txs').innerHTML = fTx.slice(0,20).map(x => `
+            document.getElementById('lista-txs').innerHTML = fTx.slice(0,15).map(x => `
                 <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm ${x.tipo==='gasto'?'text-rose-500':(x.tipo==='ingreso'?'text-emerald-500':'text-blue-500')}">
@@ -469,7 +458,6 @@
                 </div>
             `).join('') || '<p class="text-xs text-center text-slate-400 font-bold">Sin movimientos</p>';
 
-            // Programados dinámicos
             document.getElementById('lista-programados').innerHTML = st.prog.map(p => `
                 <div class="flex justify-between items-center text-[10px] p-2 bg-slate-50 rounded-lg group">
                     <span class="font-bold text-slate-600">${p.desc} (${p.fr==='sem'?'Viernes':'Día '+p.dia})</span>
@@ -480,15 +468,41 @@
                 </div>
             `).join('') || '<p class="text-[10px] font-bold text-slate-400 italic">No hay movimientos fijos.</p>';
 
+            updateAnalisis();
             updateChart();
         }
 
-        function eliminarProg(id) {
-            if(confirm("¿Eliminar este movimiento automático para siempre? (Ej. Si ya acabaste de pagar la tanda)")) {
-                st.prog = st.prog.filter(p => p.id !== id);
-                save(); updUI();
-            }
+        function updateAnalisis() {
+            // Ingresos y Gastos fijos
+            let ing = 0, gas = 0;
+            st.prog.forEach(p => {
+                let mMes = p.fr === 'sem' ? p.m * 4 : p.m;
+                if(p.tipo === 'ingreso') ing += mMes;
+                if(p.tipo === 'gasto' || p.tipo === 'traspaso') gas += mMes; // Traspaso a deuda es un gasto de flujo
+            });
+            document.getElementById('ai-ingresos').innerText = fmt(ing);
+            document.getElementById('ai-gastos').innerText = fmt(gas);
+
+            // Proyecciones de deuda
+            let html = "";
+            st.c.filter(c => c.tipo === 'deuda' || c.tipo === 'tarjeta').forEach(c => {
+                if(c.s > 0) {
+                    // Buscar si hay pago programado
+                    let abono = 0;
+                    st.prog.forEach(p => { if(p.tipo === 'traspaso' && p.d === c.id) abono += (p.fr==='sem'?p.m*4:p.m); });
+                    
+                    if(abono > 0) {
+                        let meses = Math.ceil(c.s / abono);
+                        html += `<div class="flex justify-between text-xs text-white"><span class="font-bold">${c.nom}</span> <span class="text-indigo-300">Libre en ${meses} mes(es)</span></div>`;
+                    } else {
+                        html += `<div class="flex justify-between text-xs text-white opacity-50"><span class="font-bold">${c.nom}</span> <span>Sin abono fijo</span></div>`;
+                    }
+                }
+            });
+            document.getElementById('ai-proyeccion').innerHTML = html || '<span class="text-xs text-emerald-400 font-bold">¡No hay deudas activas!</span>';
         }
+
+        function eliminarProg(id) { if(confirm("¿Eliminar automático?")) { st.prog = st.prog.filter(p => p.id !== id); save(); updUI(); } }
 
         function abrirModalAuto() {
             const opts = st.c.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
@@ -502,17 +516,12 @@
         function setTipoAuto(t) {
             const bo = document.getElementById('bloque-auto-origen');
             const bd = document.getElementById('bloque-auto-destino');
-            const lo = document.getElementById('lbl-auto-origen');
-            const ld = document.getElementById('lbl-auto-destino');
-
-            if(t === 'gasto') { bo.style.display='block'; bd.style.display='none'; lo.innerText='Salió de / Pagué con (Banco/Tarjeta):'; }
-            if(t === 'ingreso') { bo.style.display='none'; bd.style.display='block'; ld.innerText='Entró a (Banco):'; }
-            if(t === 'traspaso') { bo.style.display='block'; bd.style.display='block'; lo.innerText='Origen (De dónde salió):'; ld.innerText='Destino (A dónde fue / Qué pagué):'; }
+            if(t === 'gasto') { bo.style.display='block'; bd.style.display='none'; }
+            if(t === 'ingreso') { bo.style.display='none'; bd.style.display='block'; }
+            if(t === 'traspaso') { bo.style.display='block'; bd.style.display='block'; }
         }
 
         function guardarAuto() {
-            if(!document.getElementById('form-auto').checkValidity()) return alert("Llena todos los campos correctamente.");
-            
             st.prog.push({
                 id: 'p' + Date.now(),
                 desc: document.getElementById('auto-desc').value,
@@ -524,8 +533,7 @@
                 fr: document.getElementById('auto-freq').value,
                 dia: parseInt(document.getElementById('auto-dia').value)
             });
-            save(); updUI();
-            document.getElementById('modal-auto').classList.add('hidden');
+            save(); updUI(); document.getElementById('modal-auto').classList.add('hidden');
         }
 
         function filtrar(t) {
@@ -541,30 +549,21 @@
             const map = {};
             st.tx.filter(t => t.tipo === 'gasto').forEach(t => map[t.cat] = (map[t.cat]||0) + t.m);
             if(chrt) chrt.destroy();
-            chrt = new Chart(ctx, {
-                type: 'doughnut',
-                data: { labels: Object.keys(map), datasets: [{ data: Object.values(map), backgroundColor: ['#2563eb', '#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#94a3b8'], borderWidth:0 }] },
-                options: { cutout: '75%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 9, family: 'Outfit', weight: 'bold' } } } } }
-            });
+            chrt = new Chart(ctx, { type: 'doughnut', data: { labels: Object.keys(map), datasets: [{ data: Object.values(map), backgroundColor: ['#2563eb', '#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#94a3b8'], borderWidth:0 }] }, options: { cutout: '75%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 9, family: 'Outfit', weight: 'bold' } } } } } });
         }
 
-        // SALDOS REALES
         function editarSaldos() {
-            const div = document.getElementById('form-saldos-container');
-            div.innerHTML = st.c.map(c => `
+            document.getElementById('form-saldos-container').innerHTML = st.c.map(c => `
                 <div>
                     <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">${c.nom} (${c.tipo})</label>
-                    <input type="number" id="saldo-edit-${c.id}" value="${c.s}" step="0.01" class="w-full bg-slate-50 border-none rounded-2xl p-4 font-black outline-none text-blue-700">
+                    <input type="number" id="saldo-edit-${c.id}" value="${c.s}" step="0.01" class="w-full bg-slate-50 rounded-2xl p-4 font-black outline-none text-blue-700">
                 </div>
             `).join('');
             document.getElementById('modal-saldos').classList.remove('hidden');
         }
         function cerrarModalSaldos() { document.getElementById('modal-saldos').classList.add('hidden'); }
         function guardarSaldos() {
-            st.c.forEach(c => {
-                const val = parseFloat(document.getElementById(`saldo-edit-${c.id}`).value) || 0;
-                c.s = val;
-            });
+            st.c.forEach(c => c.s = parseFloat(document.getElementById(`saldo-edit-${c.id}`).value) || 0);
             save(); updUI(); cerrarModalSaldos();
         }
 
