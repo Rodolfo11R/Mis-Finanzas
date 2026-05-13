@@ -178,8 +178,8 @@
                         <div class="absolute -right-4 -top-4 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center opacity-50"><i class="fa-solid fa-robot text-blue-500"></i></div>
                         <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-4">Automatización</h2>
                         <p class="text-xs text-slate-500 font-medium mb-4">La app revisa tus ingresos de nómina y pagos fijos (como la PC, Mamá, Renta) y los aplica solos los viernes o el día del mes correspondiente.</p>
-                        <div id="lista-programados" class="space-y-2 mb-4"></div>
-                        <button class="w-full py-3 bg-slate-100 text-slate-500 font-black text-xs uppercase tracking-widest rounded-xl">Se aplica automáticamente</button>
+                        <div id="lista-programados" class="space-y-2 mb-4 w-full"></div>
+                        <button onclick="abrirModalAuto()" class="w-full py-3 bg-blue-100 text-blue-600 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-blue-200 transition"><i class="fa-solid fa-plus mr-2"></i>Añadir Fijo Automático</button>
                     </div>
                 </div>
 
@@ -215,6 +215,46 @@
         </div>
     </div>
 
+    <!-- MODAL NUEVO AUTOMÁTICO -->
+    <div id="modal-auto" class="fixed inset-0 bg-slate-950/80 hidden flex items-center justify-center z-[100] backdrop-blur-xl p-4">
+        <div class="bg-white rounded-[3rem] p-8 max-w-lg w-full shadow-2xl h-[80vh] flex flex-col animate-in">
+            <h3 class="text-2xl font-black mb-2 text-slate-900 italic">Programar Movimiento Fijo</h3>
+            <p class="text-xs text-slate-500 font-medium mb-6">Este movimiento se aplicará solo cada semana o cada mes.</p>
+            
+            <form id="form-auto" class="flex-1 overflow-y-auto space-y-4 pr-2 no-scrollbar">
+                <select id="auto-tipo" class="w-full bg-slate-50 rounded-2xl p-4 font-bold outline-none" onchange="setTipoAuto(this.value)">
+                    <option value="gasto">Gasto (Baja tu banco / Sube deuda)</option>
+                    <option value="ingreso">Ingreso (Entra a tu banco)</option>
+                    <option value="traspaso">Traspaso / Abono (De una a otra)</option>
+                </select>
+                <input type="text" id="auto-desc" required placeholder="Concepto (Ej. Pago Liverpool, Abono Bluu)" class="w-full bg-slate-50 rounded-2xl p-4 font-bold outline-none">
+                <input type="number" id="auto-monto" required min="0.01" step="0.01" placeholder="$ Monto Exacto" class="w-full bg-slate-50 rounded-2xl p-4 font-black text-blue-600 outline-none">
+                
+                <div class="flex gap-4">
+                    <select id="auto-freq" class="w-1/2 bg-slate-50 rounded-2xl p-4 text-sm font-bold outline-none" onchange="document.getElementById('auto-dia').placeholder = this.value==='sem'?'Día (1=Lun, 5=Vie)':'Día del mes (1 al 31)'">
+                        <option value="men">Mensual</option>
+                        <option value="sem">Semanal</option>
+                    </select>
+                    <input type="number" id="auto-dia" required min="1" max="31" placeholder="Día del mes (1 al 31)" class="w-1/2 bg-slate-50 rounded-2xl p-4 font-bold outline-none">
+                </div>
+
+                <div id="bloque-auto-origen" class="block">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-auto-origen">Origen / De dónde sale:</label>
+                    <select id="auto-origen" class="w-full bg-slate-50 rounded-2xl p-4 text-sm font-bold outline-none"></select>
+                </div>
+                <div id="bloque-auto-destino" class="hidden">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-auto-destino">Destino / A dónde entra:</label>
+                    <select id="auto-destino" class="w-full bg-slate-50 rounded-2xl p-4 text-sm font-bold outline-none"></select>
+                </div>
+            </form>
+
+            <div class="flex gap-4 pt-6 mt-4 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('modal-auto').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-black text-slate-500 uppercase tracking-widest text-xs">Cancelar</button>
+                <button type="button" onclick="guardarAuto()" class="flex-1 py-4 bg-blue-600 rounded-2xl font-black text-white uppercase tracking-widest text-xs shadow-lg shadow-blue-200">Programar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const PIN = "1979";
         
@@ -244,12 +284,13 @@
             prog: [
                 { id: 'p1', desc: 'Nómina Banorte', m: 2200, tipo: 'ingreso', o: '', d: 'banorte', cat: 'Nómina', fr: 'sem', dia: 5 },
                 { id: 'p2', desc: 'Bono Efectivo', m: 985, tipo: 'ingreso', o: '', d: 'efectivo', cat: 'Nómina', fr: 'sem', dia: 5 },
-                { id: 'p3', desc: 'Tanda Semanal (Borrar en 1 sem)', m: 500, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Tanda', fr: 'sem', dia: 5 },
+                { id: 'p3', desc: 'Tanda Semanal', m: 500, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Tanda', fr: 'sem', dia: 5 },
                 
-                { id: 'p4', desc: 'Plan Celular', m: 1832, tipo: 'gasto', o: 'banorte', d: '', cat: 'Servicios', fr: 'men', dia: 15 },
+                { id: 'p4', desc: 'Plan Celular', m: 1832, tipo: 'gasto', o: 'banorte', d: '', cat: 'Servicios', fr: 'men', dia: 4 },
                 { id: 'p5', desc: 'Renta Casa', m: 1850, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Vivienda', fr: 'men', dia: 1 },
                 { id: 'p6', desc: 'Pago PC Rodo', m: 1775, tipo: 'gasto', o: 'banorte', d: '', cat: 'Equipo', fr: 'men', dia: 15 },
-                { id: 'p7', desc: 'Abono Mamá', m: 1200, tipo: 'traspaso', o: 'banorte', d: 'mama', cat: 'Deudas', fr: 'men', dia: 15 }
+                { id: 'p7', desc: 'Abono Mamá', m: 1200, tipo: 'traspaso', o: 'banorte', d: 'mama', cat: 'Deudas', fr: 'men', dia: 30 },
+                { id: 'p8', desc: 'Abono Bluu (PC)', m: 500, tipo: 'traspaso', o: 'bluu', d: 'banorte', cat: 'Otros', fr: 'men', dia: 30 }
             ]
         };
 
@@ -447,6 +488,44 @@
                 st.prog = st.prog.filter(p => p.id !== id);
                 save(); updUI();
             }
+        }
+
+        function abrirModalAuto() {
+            const opts = st.c.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+            document.getElementById('auto-origen').innerHTML = opts;
+            document.getElementById('auto-destino').innerHTML = opts;
+            document.getElementById('form-auto').reset();
+            setTipoAuto('gasto');
+            document.getElementById('modal-auto').classList.remove('hidden');
+        }
+
+        function setTipoAuto(t) {
+            const bo = document.getElementById('bloque-auto-origen');
+            const bd = document.getElementById('bloque-auto-destino');
+            const lo = document.getElementById('lbl-auto-origen');
+            const ld = document.getElementById('lbl-auto-destino');
+
+            if(t === 'gasto') { bo.style.display='block'; bd.style.display='none'; lo.innerText='Salió de / Pagué con (Banco/Tarjeta):'; }
+            if(t === 'ingreso') { bo.style.display='none'; bd.style.display='block'; ld.innerText='Entró a (Banco):'; }
+            if(t === 'traspaso') { bo.style.display='block'; bd.style.display='block'; lo.innerText='Origen (De dónde salió):'; ld.innerText='Destino (A dónde fue / Qué pagué):'; }
+        }
+
+        function guardarAuto() {
+            if(!document.getElementById('form-auto').checkValidity()) return alert("Llena todos los campos correctamente.");
+            
+            st.prog.push({
+                id: 'p' + Date.now(),
+                desc: document.getElementById('auto-desc').value,
+                m: parseFloat(document.getElementById('auto-monto').value),
+                tipo: document.getElementById('auto-tipo').value,
+                o: document.getElementById('auto-origen').value,
+                d: document.getElementById('auto-destino').value,
+                cat: 'Otros',
+                fr: document.getElementById('auto-freq').value,
+                dia: parseInt(document.getElementById('auto-dia').value)
+            });
+            save(); updUI();
+            document.getElementById('modal-auto').classList.add('hidden');
         }
 
         function filtrar(t) {
