@@ -297,7 +297,7 @@
         let st = {
             c: localStorage.getItem('fr_c_v2') ? JSON.parse(localStorage.getItem('fr_c_v2')) : DEFAULTS.cuentas,
             tx: JSON.parse(localStorage.getItem('fr_tx')) || [],
-            prog: localStorage.getItem('fr_p_v2') ? JSON.parse(localStorage.getItem('fr_p_v2')) : DEFAULTS.prog,
+            prog: localStorage.getItem('fr_p_v3') ? JSON.parse(localStorage.getItem('fr_p_v3')) : DEFAULTS.prog,
             lastAuto: localStorage.getItem('fr_auto') || null,
             f: 'tod'
         };
@@ -324,7 +324,7 @@
         function save() {
             localStorage.setItem('fr_c_v2', JSON.stringify(st.c));
             localStorage.setItem('fr_tx', JSON.stringify(st.tx));
-            localStorage.setItem('fr_p_v2', JSON.stringify(st.prog));
+            localStorage.setItem('fr_p_v3', JSON.stringify(st.prog));
             localStorage.setItem('fr_auto', st.lastAuto);
         }
 
