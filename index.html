@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanzas Rodolfo">
-    <title>Finanzas Rodolfo | Premium</title>
+    <title>Finanzas Rodolfo | Ultimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -14,72 +14,35 @@
     <style>
         :root { --accent: #2563eb; --bg: #f1f5f9; }
         body { font-family: 'Outfit', sans-serif; background-color: var(--bg); -webkit-tap-highlight-color: transparent; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .safe-top { padding-top: env(safe-area-inset-top); }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-in { animation: fadeIn 0.4s ease-out forwards; }
         
-        /* PIN Overlay */
         #login-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: #0f172a;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            position: fixed; inset: 0; z-index: 9999; background: #0f172a;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: all 0.5s ease;
         }
-        .pin-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 2px solid #334155;
-            transition: all 0.2s;
-        }
-        .pin-dot.active {
-            background: #3b82f6;
-            border-color: #3b82f6;
-            box-shadow: 0 0 15px #3b82f6;
-        }
-        .numpad-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #1e293b;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.1s;
-        }
+        .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #334155; transition: all 0.2s; }
+        .pin-dot.active { background: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 15px #3b82f6; }
+        .numpad-btn { width: 70px; height: 70px; border-radius: 50%; background: #1e293b; color: white; font-size: 1.5rem; font-weight: 600; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
         .numpad-btn:active { background: #334155; transform: scale(0.9); }
     </style>
 </head>
-<body class="text-slate-900 pb-24 sm:pb-8 overflow-x-hidden">
+<body class="text-slate-900 pb-24 sm:pb-8 overflow-x-hidden hidden" id="app-body">
 
-    <!-- PANTALLA DE BLOQUEO -->
+    <!-- LOGIN -->
     <div id="login-screen">
         <div class="mb-10 text-center">
             <div class="w-20 h-20 bg-blue-600 rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-2xl shadow-blue-500/40">
                 <i class="fa-solid fa-vault text-white text-3xl"></i>
             </div>
             <h1 class="text-white text-2xl font-black italic">FINANZAS RODOLFO</h1>
-            <p class="text-slate-500 text-sm mt-2">Introduce tu clave de acceso</p>
         </div>
-        
         <div class="flex gap-6 mb-12" id="pin-display">
-            <div class="pin-dot"></div>
-            <div class="pin-dot"></div>
-            <div class="pin-dot"></div>
-            <div class="pin-dot"></div>
+            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
         </div>
-
         <div class="grid grid-cols-3 gap-6">
             <button class="numpad-btn" onclick="pressPin('1')">1</button>
             <button class="numpad-btn" onclick="pressPin('2')">2</button>
@@ -96,641 +59,425 @@
         </div>
     </div>
 
-    <!-- APP PRINCIPAL -->
     <div class="max-w-6xl mx-auto p-4 sm:p-6 animate-in">
-        <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-[2rem] card-shadow border border-white/50 glass">
+        <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-[2rem] card-shadow">
             <div>
                 <h1 class="text-2xl font-black text-slate-900 flex items-center tracking-tight">
                     <span class="bg-blue-600 text-white p-2 rounded-xl mr-3 shadow-lg shadow-blue-200">
-                        <i class="fa-solid fa-music"></i>
+                        <i class="fa-solid fa-bolt"></i>
                     </span>
                     Finanzas Rodolfo
                 </h1>
-                <p class="text-slate-400 text-xs font-bold ml-12 uppercase tracking-widest mt-1">Control de Patrimonio</p>
+                <p class="text-slate-400 text-xs font-bold ml-12 uppercase tracking-widest mt-1">Nómina, Deudas y Cobranza</p>
             </div>
             <div class="mt-4 sm:mt-0 flex gap-3 w-full sm:w-auto">
-                <button onclick="consultarAsesorIA()" class="flex-1 sm:flex-none bg-slate-900 text-white px-5 py-3 rounded-2xl hover:shadow-xl transition text-sm font-black flex items-center justify-center">
-                    <i class="fa-solid fa-wand-magic-sparkles mr-2 text-blue-400"></i> Asesor IA
+                <button onclick="editarSaldos()" class="flex-1 sm:flex-none bg-amber-100 text-amber-700 px-5 py-3 rounded-2xl hover:bg-amber-200 transition text-xs font-black flex items-center justify-center uppercase tracking-widest">
+                    <i class="fa-solid fa-pen-to-square mr-2"></i> Ajustar Saldos
                 </button>
             </div>
         </header>
 
         <!-- DASHBOARD RESUMEN -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="col-span-2 sm:col-span-1 bg-blue-600 rounded-[2rem] shadow-xl p-6 text-white overflow-hidden relative">
+            <div class="col-span-2 sm:col-span-1 bg-blue-600 rounded-[2rem] shadow-xl p-6 text-white relative overflow-hidden">
                 <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
-                <h3 class="text-xs font-bold uppercase tracking-widest text-blue-100 opacity-80">Efectivo Total</h3>
+                <h3 class="text-xs font-bold uppercase tracking-widest text-blue-100 opacity-80">Efectivo Disponible</h3>
                 <p class="text-3xl font-black mt-2 tracking-tighter" id="dinero-libre">$0.00</p>
-                <div class="mt-4 flex items-center gap-2">
-                    <span class="bg-white/20 px-2 py-1 rounded-lg text-[10px] font-bold">Disponible hoy</span>
-                </div>
+                <p class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-1 rounded-lg font-bold">Lana en Bancos/Bolsillo</p>
             </div>
             
-            <div class="bg-white rounded-[2rem] card-shadow p-6 border border-slate-100 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Me deben</h3>
-                    <p class="text-2xl font-black text-emerald-600 mt-1" id="total-ahorros">$0.00</p>
-                </div>
-                <div class="w-full bg-slate-100 h-2 rounded-full mt-4 overflow-hidden">
-                    <div id="barra-ahorro-real" class="bg-emerald-500 h-full transition-all duration-1000" style="width: 0%"></div>
-                </div>
+            <div class="bg-white rounded-[2rem] card-shadow p-6 border border-slate-100">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Me Deben</h3>
+                <p class="text-2xl font-black text-emerald-600 mt-1" id="total-cobrar">$0.00</p>
+                <p class="text-[10px] text-slate-400 mt-2 font-medium">Novia, Bluu, Brayan...</p>
             </div>
 
             <div class="bg-white rounded-[2rem] card-shadow p-6 border border-slate-100">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Deudas (Meses)</h3>
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Yo Debo</h3>
                 <p class="text-2xl font-black text-rose-500 mt-1" id="total-deudas">$0.00</p>
-                <p class="text-[10px] text-slate-400 mt-2 font-medium">Tarjetas y préstamos activos</p>
+                <p class="text-[10px] text-slate-400 mt-2 font-medium">Tarjetas, Préstamos y Tiendas</p>
             </div>
 
             <div class="bg-slate-900 rounded-[2rem] card-shadow p-6 text-white relative overflow-hidden">
                 <i class="fa-solid fa-chart-line absolute -right-2 -bottom-2 text-6xl opacity-10"></i>
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Valor Neto</h3>
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Patrimonio Neto</h3>
                 <p class="text-2xl font-black mt-1 tracking-tighter" id="balance-total">$0.00</p>
-                <p class="text-[10px] text-blue-400 mt-2 font-bold italic">Lana real de Rodolfo</p>
+                <p class="text-[10px] text-blue-400 mt-2 font-bold italic">Valor real de tu imperio</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <!-- PANEL IZQUIERDO: ACCIÓN -->
-            <div class="lg:col-span-4 space-y-6">
+            <div class="lg:col-span-5 space-y-6">
                 
-                <!-- Registro de Movimiento -->
+                <!-- REGISTRO -->
                 <div class="bg-white rounded-[2.5rem] card-shadow p-8 border-t-8 border-blue-600">
-                    <h2 class="text-xl font-black mb-6 text-slate-800">Registrar Lana</h2>
-                    <form id="formulario-transaccion">
+                    <h2 class="text-xl font-black mb-6 text-slate-800">Registrar Movimiento</h2>
+                    <form id="form-tx">
                         <div class="flex bg-slate-100 p-1.5 rounded-2xl mb-6">
-                            <button type="button" onclick="setTipo('ingreso')" id="btn-ingreso" class="flex-1 py-3 rounded-xl font-bold text-sm transition bg-white shadow-sm text-emerald-600">Entrada</button>
-                            <button type="button" onclick="setTipo('gasto')" id="btn-gasto" class="flex-1 py-3 rounded-xl font-bold text-sm transition text-slate-500">Salida</button>
+                            <button type="button" onclick="setTipoTx('gasto')" id="btx-gasto" class="flex-1 py-3 bg-white shadow-sm rounded-xl font-black text-xs uppercase tracking-widest text-rose-500">Gasto</button>
+                            <button type="button" onclick="setTipoTx('ingreso')" id="btx-ingreso" class="flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest text-slate-400">Ingreso</button>
+                            <button type="button" onclick="setTipoTx('traspaso')" id="btx-traspaso" class="flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest text-slate-400">Traspaso</button>
                         </div>
-                        <input type="hidden" id="tipo-hidden" value="ingreso">
+                        <input type="hidden" id="tx-tipo" value="gasto">
                         
-                        <div class="space-y-5">
+                        <div class="space-y-4">
                             <div>
-                                <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Concepto / Negocio</label>
-                                <input type="text" id="descripcion" required placeholder="Ej. Tocar con grupo, Pago celular..." class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none text-sm font-bold">
+                                <input type="text" id="tx-desc" required placeholder="Concepto (Ej. Comida, Grupo, Abono...)" class="w-full bg-slate-50 border-none rounded-2xl p-4 font-bold outline-none">
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Monto ($)</label>
-                                    <input type="number" id="monto" required min="0.01" step="0.01" placeholder="0.00" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none text-xl font-black text-blue-700">
-                                </div>
-                                <div>
-                                    <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Categoría</label>
-                                    <select id="categoria" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none text-sm font-bold">
-                                        <option value="Nomina">💼 Nómina</option>
-                                        <option value="Grupo Musical">🎸 Grupo Musical</option>
-                                        <option value="Renta">🏠 Renta Casa</option>
-                                        <option value="Celular">📱 Plan Celular</option>
-                                        <option value="Deudas">💳 Deuda / Tarjeta</option>
-                                        <option value="Me Deben">⏳ Me Deben</option>
-                                        <option value="Cosas Mensas">🎮 Cosas Mensas</option>
-                                        <option value="Comida">🌮 Comida</option>
-                                        <option value="Otros">🌀 Otros</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Cuenta Origen/Destino</label>
-                                <select id="cuentaSelect" required class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none text-sm font-bold">
+                            <div class="flex gap-4">
+                                <input type="number" id="tx-monto" required min="0.01" step="0.01" placeholder="$ Monto" class="w-1/2 bg-slate-50 border-none rounded-2xl p-4 text-lg font-black text-blue-600 outline-none">
+                                <select id="tx-cat" class="w-1/2 bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold outline-none">
+                                    <option value="Comida">🌮 Comida</option>
+                                    <option value="Grupo Musical">🎸 Grupo Musical</option>
+                                    <option value="Vivienda">🏠 Vivienda / Renta</option>
+                                    <option value="Servicios">📱 Servicios / Cel</option>
+                                    <option value="Equipo">💻 Equipo / PC</option>
+                                    <option value="Deudas">💳 Pago Deuda</option>
+                                    <option value="Tanda">💰 Tanda / Ahorro</option>
+                                    <option value="Nómina">💼 Nómina / Bono</option>
+                                    <option value="Cosas Mensas">🎮 Cosas Mensas</option>
+                                    <option value="Otros">🌀 Otros</option>
                                 </select>
                             </div>
-                            <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-blue-700 transition shadow-xl shadow-blue-100 active:scale-95">
-                                GUARDAR MOVIMIENTO
+
+                            <!-- Dinámicos según tipo -->
+                            <div id="bloque-origen" class="block">
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-origen">Salió de / Pagué con:</label>
+                                <select id="tx-origen" class="w-full bg-slate-50 rounded-2xl p-4 text-sm font-bold outline-none"></select>
+                            </div>
+                            <div id="bloque-destino" class="hidden">
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest" id="lbl-destino">Entró a / Pagué a:</label>
+                                <select id="tx-destino" class="w-full bg-slate-50 rounded-2xl p-4 text-sm font-bold outline-none"></select>
+                            </div>
+
+                            <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-blue-700 transition shadow-lg mt-2 active:scale-95">
+                                GUARDAR
                             </button>
                         </div>
                     </form>
                 </div>
 
-                <!-- Cuentas -->
+                <!-- CUENTAS -->
                 <div class="bg-white rounded-[2.5rem] card-shadow p-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest">Bóvedas y Cuentas</h2>
-                        <button onclick="abrirModalCuenta()" class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition shadow-sm"><i class="fa-solid fa-plus"></i></button>
-                    </div>
-                    <div id="lista-cuentas-sidebar" class="space-y-4">
-                        <!-- Cuentas inyectadas aquí -->
-                    </div>
+                    <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-6">Mis Cuentas & Deudas</h2>
+                    <div id="lista-cuentas" class="space-y-3 max-h-[400px] overflow-y-auto pr-2 no-scrollbar"></div>
                 </div>
             </div>
 
-            <!-- PANEL DERECHO: ANALÍTICA -->
-            <div class="lg:col-span-8 space-y-8">
+            <!-- PANEL DERECHO: ANALÍTICA Y AUTO -->
+            <div class="lg:col-span-7 space-y-8">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Gráfica Gastos -->
-                    <div class="bg-white rounded-[2.5rem] card-shadow p-8 flex flex-col items-center border border-slate-100">
-                        <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-6 self-start">¿A dónde se va mi lana?</h2>
-                        <div class="chart-container h-64 w-full relative">
-                            <canvas id="chartGastos"></canvas>
-                        </div>
+                    <div class="bg-white rounded-[2.5rem] card-shadow p-8 flex flex-col items-center">
+                        <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-4 self-start">Distribución Gastos</h2>
+                        <div class="w-full h-48 relative"><canvas id="chartGastos"></canvas></div>
                     </div>
 
-                    <!-- Movimientos Fijos -->
-                    <div class="bg-white rounded-[2.5rem] card-shadow p-8 border border-slate-100">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest">Pagos Fijos (Nómina/Renta)</h2>
-                            <button onclick="aplicarRecurrentes()" class="text-[10px] bg-slate-900 text-white px-4 py-2 rounded-xl font-black uppercase tracking-widest hover:bg-black transition">Aplicar Todo</button>
-                        </div>
-                        <div id="lista-recurrentes" class="space-y-3 max-h-48 overflow-y-auto pr-2 no-scrollbar">
-                            <!-- Inyectado por JS -->
-                        </div>
-                        <button onclick="abrirModalRecurrente()" class="w-full mt-6 py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs font-black hover:border-blue-400 hover:text-blue-500 transition uppercase tracking-widest">
-                            + Configurar pago mensual
-                        </button>
+                    <div class="bg-white rounded-[2.5rem] card-shadow p-8 border border-blue-50 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center opacity-50"><i class="fa-solid fa-robot text-blue-500"></i></div>
+                        <h2 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-4">Automatización</h2>
+                        <p class="text-xs text-slate-500 font-medium mb-4">La app revisa tus ingresos de nómina y pagos fijos (como la PC, Mamá, Renta) y los aplica solos los viernes o el día del mes correspondiente.</p>
+                        <div id="lista-programados" class="space-y-2 mb-4"></div>
+                        <button class="w-full py-3 bg-slate-100 text-slate-500 font-black text-xs uppercase tracking-widest rounded-xl">Se aplica automáticamente</button>
                     </div>
                 </div>
 
-                <!-- Historial -->
-                <div class="bg-white rounded-[2.5rem] card-shadow p-8 min-h-[500px]">
+                <!-- HISTORIAL -->
+                <div class="bg-white rounded-[2.5rem] card-shadow p-8 min-h-[400px]">
                     <div class="flex justify-between items-center mb-8">
                         <h2 class="text-2xl font-black text-slate-900 tracking-tight">Actividad Reciente</h2>
                         <div class="flex bg-slate-100 p-1 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                            <button id="btn-filtro-todos" onclick="filtrarHistorial('todos')" class="px-4 py-2 bg-white shadow-sm rounded-lg text-slate-900">Todos</button>
-                            <button id="btn-filtro-mes" onclick="filtrarHistorial('mes')" class="px-4 py-2 text-slate-400">Este Mes</button>
+                            <button id="f-tod" onclick="filtrar('tod')" class="px-3 py-2 bg-white shadow-sm rounded-lg text-slate-900">Todos</button>
+                            <button id="f-mes" onclick="filtrar('mes')" class="px-3 py-2 text-slate-400">Mes</button>
                         </div>
                     </div>
-                    <div id="lista-transacciones" class="space-y-5">
-                        <!-- Historial inyectado por JS -->
-                    </div>
+                    <div id="lista-txs" class="space-y-4"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL NUEVA CUENTA -->
-    <div id="modal-cuenta" class="fixed inset-0 bg-slate-950/80 hidden flex items-center justify-center z-[100] backdrop-blur-xl p-6">
-        <div class="bg-white rounded-[3rem] p-10 max-w-md w-full shadow-2xl animate-in">
-            <h3 class="text-2xl font-black mb-8 text-slate-900 italic">Nueva Cuenta</h3>
-            <form id="form-nueva-cuenta" class="space-y-6">
-                <div>
-                    <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Nombre de la cuenta</label>
-                    <input type="text" id="nombre-cuenta" required placeholder="Ej. Bancomer Nómina, Santander Grupo" class="w-full bg-slate-100 border-none rounded-2xl p-5 focus:ring-2 focus:ring-blue-500 outline-none font-bold">
-                </div>
-                <div>
-                    <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Tipo de lana</label>
-                    <select id="tipo-cuenta" class="w-full bg-slate-100 border-none rounded-2xl p-5 outline-none font-bold">
-                        <option value="activo-efectivo">Efectivo / Débito</option>
-                        <option value="activo-cobrar">Gente que ME DEBE (Pendiente)</option>
-                        <option value="pasivo-tarjeta">Tarjeta de Crédito (Deuda)</option>
-                        <option value="pasivo-prestamo">Préstamo Personal (Debo)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Saldo Actual / Deuda Total</label>
-                    <input type="number" id="saldo-inicial" required step="0.01" value="0.00" class="w-full bg-slate-100 border-none rounded-2xl p-5 focus:ring-2 focus:ring-blue-500 outline-none font-black text-xl">
-                </div>
-                <div class="flex gap-4 pt-4">
-                    <button type="button" onclick="cerrarModalCuenta()" class="flex-1 py-5 bg-slate-100 rounded-2xl font-black text-slate-500 uppercase tracking-widest text-xs">Cancelar</button>
-                    <button type="submit" class="flex-1 py-5 bg-blue-600 rounded-2xl font-black text-white uppercase tracking-widest text-xs shadow-lg shadow-blue-200">Crear Cuenta</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL RECURRENTE -->
-    <div id="modal-recurrente" class="fixed inset-0 bg-slate-950/80 hidden flex items-center justify-center z-[100] backdrop-blur-xl p-6">
-        <div class="bg-white rounded-[3rem] p-10 max-w-md w-full shadow-2xl animate-in">
-            <h3 class="text-2xl font-black mb-8 text-slate-900 italic">Programar Pago/Cobro</h3>
-            <form id="form-nuevo-recurrente" class="space-y-6">
-                <div class="flex bg-slate-100 p-1.5 rounded-2xl">
-                    <button type="button" id="rec-tipo-ingreso" onclick="setTipoRec('ingreso')" class="flex-1 py-3 bg-white rounded-xl shadow-sm font-black text-xs uppercase text-emerald-600">Ingreso</button>
-                    <button type="button" id="rec-tipo-gasto" onclick="setTipoRec('gasto')" class="flex-1 py-3 rounded-xl font-black text-xs uppercase text-slate-400">Gasto</button>
-                </div>
-                <input type="hidden" id="tipo-recurrente" value="ingreso">
-                
-                <div>
-                    <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Concepto Fijo</label>
-                    <input type="text" id="desc-recurrente" required placeholder="Ej. Renta, Nómina, Pago Cel..." class="w-full bg-slate-100 border-none rounded-2xl p-5 outline-none font-bold">
-                </div>
-                <div>
-                    <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Monto Mensual</label>
-                    <input type="number" id="monto-recurrente" required step="0.01" placeholder="0.00" class="w-full bg-slate-100 border-none rounded-2xl p-5 outline-none font-black text-xl">
-                </div>
-                <div>
-                    <label class="text-[11px] font-black text-slate-400 uppercase ml-1 tracking-widest">Cuenta Asociada</label>
-                    <select id="cuenta-recurrente" required class="w-full bg-slate-100 border-none rounded-2xl p-5 outline-none font-bold"></select>
-                </div>
-                <div class="flex gap-4 pt-4">
-                    <button type="button" onclick="cerrarModalRecurrente()" class="flex-1 py-5 text-slate-400 font-black text-xs uppercase tracking-widest">Cerrar</button>
-                    <button type="submit" class="flex-1 py-5 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL ASESOR IA -->
-    <div id="modal-asesor" class="fixed inset-0 bg-slate-950/80 hidden flex items-center justify-center z-[100] backdrop-blur-xl p-6">
-        <div class="bg-white rounded-[3rem] p-10 max-w-lg w-full shadow-2xl relative overflow-hidden animate-in">
-            <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"></div>
-            <div class="flex justify-between items-center mb-8">
-                <h3 class="text-2xl font-black flex items-center tracking-tight"><i class="fa-solid fa-robot text-blue-600 mr-3"></i>Consultor Financiero</h3>
-                <button onclick="cerrarModalAsesor()" class="text-slate-400 hover:text-slate-900 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <!-- MODAL EDITAR SALDOS -->
+    <div id="modal-saldos" class="fixed inset-0 bg-slate-950/80 hidden flex items-center justify-center z-[100] backdrop-blur-xl p-4">
+        <div class="bg-white rounded-[3rem] p-8 max-w-lg w-full shadow-2xl h-[80vh] flex flex-col animate-in">
+            <h3 class="text-2xl font-black mb-2 text-slate-900 italic">Ajuste de Saldos Reales</h3>
+            <p class="text-xs text-slate-500 font-medium mb-6">Mete las cantidades exactas de cuánto tienes, cuánto debes y cuánto te deben hoy.</p>
+            
+            <div class="flex-1 overflow-y-auto space-y-4 pr-2 no-scrollbar" id="form-saldos-container">
+                <!-- Inputs inyectados -->
             </div>
-            <div id="loader-asesor" class="py-16 text-center">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-6"></div>
-                <p class="text-slate-500 font-bold italic">Analizando tu lana, Rodolfo...</p>
-            </div>
-            <div id="contenido-asesor" class="hidden">
-                <div id="texto-asesor" class="text-slate-700 leading-relaxed bg-blue-50/50 p-8 rounded-3xl border border-blue-100 italic font-medium text-lg"></div>
-                <button onclick="cerrarModalAsesor()" class="w-full mt-8 py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-xs">Entendido, socio</button>
+
+            <div class="flex gap-4 pt-6 mt-4 border-t border-slate-100">
+                <button type="button" onclick="cerrarModalSaldos()" class="flex-1 py-4 bg-slate-100 rounded-2xl font-black text-slate-500 uppercase tracking-widest text-xs">Cancelar</button>
+                <button type="button" onclick="guardarSaldos()" class="flex-1 py-4 bg-blue-600 rounded-2xl font-black text-white uppercase tracking-widest text-xs shadow-lg shadow-blue-200">Guardar Todo</button>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN Y ESTADO
-        const CONFIG = {
-            PIN_CORRECTO: "1979",
-            API_KEY: "" // Rodolfo: Pon aquí tu API Key de Gemini cuando la tengas
+        const PIN = "1979";
+        
+        // BASE DE DATOS INICIAL
+        const DEFAULTS = {
+            cuentas: [
+                { id: 'banorte', nom: 'Banorte', tipo: 'banco', s: 0, ic: 'fa-building-columns', col: 'text-rose-600' },
+                { id: 'efectivo', nom: 'Efectivo', tipo: 'banco', s: 0, ic: 'fa-money-bill', col: 'text-emerald-600' },
+                { id: 'spin', nom: 'Spin by Oxxo', tipo: 'banco', s: 0, ic: 'fa-store', col: 'text-green-500' },
+                { id: 'mp', nom: 'Mercado Pago', tipo: 'banco', s: 0, ic: 'fa-handshake', col: 'text-blue-500' },
+                { id: 'caja', nom: 'Caja Popular', tipo: 'banco', s: 0, ic: 'fa-piggy-bank', col: 'text-teal-600' },
+                
+                { id: 'klar', nom: 'Klar', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-slate-800' },
+                { id: 'nu', nom: 'Nu', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-purple-600' },
+                { id: 'plata', nom: 'Plata', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-slate-500' },
+                
+                { id: 'liverpool', nom: 'Liverpool', tipo: 'deuda', s: 0, ic: 'fa-bag-shopping', col: 'text-pink-600' },
+                { id: 'coppel', nom: 'Coppel', tipo: 'deuda', s: 0, ic: 'fa-store', col: 'text-yellow-500' },
+                { id: 'mama', nom: 'Préstamo Mamá', tipo: 'deuda', s: 0, ic: 'fa-person-breastfeeding', col: 'text-rose-400' },
+                
+                { id: 'novia', nom: 'Novia (PC)', tipo: 'cobrar', s: 0, ic: 'fa-heart', col: 'text-red-400' },
+                { id: 'bluu', nom: 'Bluu (PC)', tipo: 'cobrar', s: 0, ic: 'fa-user', col: 'text-blue-500' },
+                { id: 'brayan', nom: 'Brayan (PC+Watch)', tipo: 'cobrar', s: 0, ic: 'fa-user', col: 'text-orange-500' },
+                
+                { id: 'carro', nom: 'Ahorro Carro', tipo: 'meta', s: 0, ic: 'fa-car', col: 'text-slate-700' }
+            ],
+            prog: [
+                { id: 'p1', desc: 'Nómina Banorte', m: 2200, tipo: 'ingreso', o: '', d: 'banorte', cat: 'Nómina', fr: 'sem', dia: 5 },
+                { id: 'p2', desc: 'Bono Efectivo', m: 985, tipo: 'ingreso', o: '', d: 'efectivo', cat: 'Nómina', fr: 'sem', dia: 5 },
+                { id: 'p3', desc: 'Tanda Semanal', m: 500, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Tanda', fr: 'sem', dia: 5 },
+                
+                { id: 'p4', desc: 'Plan Celular', m: 1832, tipo: 'gasto', o: 'banorte', d: '', cat: 'Servicios', fr: 'men', dia: 15 },
+                { id: 'p5', desc: 'Renta Casa', m: 1850, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Vivienda', fr: 'men', dia: 1 },
+                { id: 'p6', desc: 'Pago PC Rodo', m: 1775, tipo: 'gasto', o: 'banorte', d: '', cat: 'Equipo', fr: 'men', dia: 15 },
+                { id: 'p7', desc: 'Abono Mamá', m: 1200, tipo: 'traspaso', o: 'banorte', d: 'mama', cat: 'Deudas', fr: 'men', dia: 15 }
+            ]
         };
 
-        let state = {
-            cuentas: JSON.parse(localStorage.getItem('fin_rod_cuentas')) || [],
-            transacciones: JSON.parse(localStorage.getItem('fin_rod_txs')) || [],
-            recurrentes: JSON.parse(localStorage.getItem('fin_rod_rec')) || [],
-            filtroActual: 'todos'
+        let st = {
+            c: JSON.parse(localStorage.getItem('fr_c')) || DEFAULTS.cuentas,
+            tx: JSON.parse(localStorage.getItem('fr_tx')) || [],
+            lastAuto: localStorage.getItem('fr_auto') || null,
+            f: 'tod'
         };
 
-        let currentPin = "";
-        let chartInstancia = null;
-
-        // SISTEMA DE SEGURIDAD (PIN)
-        function pressPin(num) {
-            if(currentPin.length < 4) {
-                currentPin += num;
-                actualizarPinDots();
-                if(currentPin.length === 4) {
-                    setTimeout(validarPin, 200);
-                }
-            }
+        // SEGURIDAD
+        let pin = "";
+        function pressPin(n) { if(pin.length < 4) { pin += n; dDots(); if(pin.length === 4) setTimeout(vPin, 200); } }
+        function dDots() { document.querySelectorAll('.pin-dot').forEach((d, i) => d.className = `pin-dot ${i < pin.length ? 'active' : ''}`); }
+        function clearPin() { pin = ""; dDots(); }
+        function vPin() { 
+            if(pin === PIN) { 
+                document.getElementById('login-screen').style.opacity = 0; 
+                document.getElementById('app-body').classList.remove('hidden');
+                setTimeout(() => { document.getElementById('login-screen').style.display = 'none'; initApp(); }, 500);
+            } else { alert("PIN Incorrecto"); clearPin(); }
         }
 
-        function actualizarPinDots() {
-            const dots = document.querySelectorAll('.pin-dot');
-            dots.forEach((dot, idx) => {
-                if(idx < currentPin.length) dot.classList.add('active');
-                else dot.classList.remove('active');
-            });
+        // INIT
+        function initApp() {
+            autoProcessor();
+            updUI();
         }
 
-        function clearPin() {
-            currentPin = "";
-            actualizarPinDots();
+        function save() {
+            localStorage.setItem('fr_c', JSON.stringify(st.c));
+            localStorage.setItem('fr_tx', JSON.stringify(st.tx));
+            localStorage.setItem('fr_auto', st.lastAuto);
         }
 
-        function validarPin() {
-            if(currentPin === CONFIG.PIN_CORRECTO) {
-                document.getElementById('login-screen').style.opacity = "0";
-                setTimeout(() => {
-                    document.getElementById('login-screen').classList.add('hidden');
-                    init();
-                }, 500);
-            } else {
-                alert("PIN INCORRECTO, RODOLFO");
-                clearPin();
-            }
-        }
+        function fmt(n) { return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n||0); }
 
-        // LÓGICA DE INICIO
-        function init() {
-            if (state.cuentas.length === 0) {
-                state.cuentas = [
-                    { id: 'c1', nombre: 'Efectivo Personal', tipo: 'activo-efectivo', saldoInicial: 0, saldoActual: 0 },
-                    { id: 'c2', nombre: 'Santander Grupo', tipo: 'activo-efectivo', saldoInicial: 0, saldoActual: 0 }
-                ];
-                guardarDatos();
-            }
-            recalcularSaldos();
-            actualizarUI();
-        }
-
-        // HANDLERS FORMULARIOS
-        document.getElementById('formulario-transaccion').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const tipo = document.getElementById('tipo-hidden').value;
-            const desc = document.getElementById('descripcion').value;
-            const monto = parseFloat(document.getElementById('monto').value);
-            const cat = document.getElementById('categoria').value;
-            const cuentaId = document.getElementById('cuentaSelect').value;
-
-            registrarTx(tipo, desc, monto, cuentaId, cat);
-            this.reset();
-            setTipo('ingreso'); // Reset visual
-        });
-
-        document.getElementById('form-nueva-cuenta').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const nombre = document.getElementById('nombre-cuenta').value;
-            const tipo = document.getElementById('tipo-cuenta').value;
-            const saldo = parseFloat(document.getElementById('saldo-inicial').value);
-
-            state.cuentas.push({
-                id: Date.now().toString(),
-                nombre,
-                tipo,
-                saldoInicial: saldo,
-                saldoActual: saldo
-            });
-
-            guardarDatos();
-            recalcularSaldos();
-            actualizarUI();
-            cerrarModalCuenta();
-            this.reset();
-        });
-
-        document.getElementById('form-nuevo-recurrente').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const tipo = document.getElementById('tipo-recurrente').value;
-            const desc = document.getElementById('desc-recurrente').value;
-            const monto = parseFloat(document.getElementById('monto-recurrente').value);
-            const cuentaId = document.getElementById('cuenta-recurrente').value;
-
-            state.recurrentes.push({
-                id: Date.now().toString(),
-                tipo,
-                descripcion: desc,
-                monto,
-                cuentaId
-            });
-
-            guardarDatos();
-            actualizarUI();
-            cerrarModalRecurrente();
-            this.reset();
-        });
-
-        // FUNCIONES DE NEGOCIO
-        function setTipo(tipo) {
-            document.getElementById('tipo-hidden').value = tipo;
-            const bIng = document.getElementById('btn-ingreso');
-            const bGas = document.getElementById('btn-gasto');
-            if(tipo === 'ingreso') {
-                bIng.className = "flex-1 py-3 rounded-xl font-bold text-sm transition bg-white shadow-sm text-emerald-600";
-                bGas.className = "flex-1 py-3 rounded-xl font-bold text-sm transition text-slate-400";
-            } else {
-                bGas.className = "flex-1 py-3 rounded-xl font-bold text-sm transition bg-white shadow-sm text-rose-500";
-                bIng.className = "flex-1 py-3 rounded-xl font-bold text-sm transition text-slate-400";
-            }
-        }
-
-        function setTipoRec(tipo) {
-            document.getElementById('tipo-recurrente').value = tipo;
-            const bIng = document.getElementById('rec-tipo-ingreso');
-            const bGas = document.getElementById('rec-tipo-gasto');
-            if(tipo === 'ingreso') {
-                bIng.className = "flex-1 py-3 bg-white rounded-xl shadow-sm font-black text-xs uppercase text-emerald-600";
-                bGas.className = "flex-1 py-3 rounded-xl font-black text-xs uppercase text-slate-400";
-            } else {
-                bGas.className = "flex-1 py-3 bg-white rounded-xl shadow-sm font-black text-xs uppercase text-rose-500";
-                bIng.className = "flex-1 py-3 rounded-xl font-black text-xs uppercase text-slate-400";
-            }
-        }
-
-        function registrarTx(tipo, desc, monto, cuentaId, categoria) {
-            state.transacciones.unshift({
-                id: Date.now().toString(),
-                tipo,
-                descripcion: desc,
-                monto,
-                cuentaId,
-                categoria,
-                fecha: new Date().toISOString()
-            });
-            recalcularSaldos();
-            guardarDatos();
-            actualizarUI();
-        }
-
-        function recalcularSaldos() {
-            state.cuentas.forEach(c => c.saldoActual = c.saldoInicial);
-            state.transacciones.forEach(tx => {
-                const cuenta = state.cuentas.find(c => c.id === tx.cuentaId);
-                if(cuenta) {
-                    const esActivo = cuenta.tipo.startsWith('activo');
-                    if(tx.tipo === 'ingreso') {
-                        cuenta.saldoActual += esActivo ? tx.monto : -tx.monto;
-                    } else {
-                        cuenta.saldoActual += esActivo ? -tx.monto : tx.monto;
-                    }
-                }
-            });
-        }
-
-        function aplicarRecurrentes() {
-            if(!confirm("¿Deseas aplicar todos los pagos/cobros fijos del mes actual?")) return;
-            state.recurrentes.forEach(r => {
-                registrarTx(r.tipo, `[FIJO] ${r.descripcion}`, r.monto, r.cuentaId, r.tipo === 'ingreso' ? 'Nomina' : 'Otros');
-            });
-            alert("¡Lana actualizada!");
-        }
-
-        // RENDERIZADO UI
-        function actualizarUI() {
-            renderizarTarjetas();
-            renderizarCuentas();
-            renderizarTransacciones();
-            renderizarRecurrentes();
-            renderizarSelects();
-            actualizarGrafica();
-        }
-
-        function renderizarTarjetas() {
-            let liq = 0, cobranza = 0, deuda = 0;
-            state.cuentas.forEach(c => {
-                if(c.tipo === 'activo-efectivo') liq += c.saldoActual;
-                else if(c.tipo === 'activo-cobrar') cobranza += c.saldoActual;
-                else if(c.tipo.startsWith('pasivo')) deuda += c.saldoActual;
-            });
-
-            document.getElementById('dinero-libre').innerText = formatMoneda(liq);
-            document.getElementById('total-ahorros').innerText = formatMoneda(cobranza);
-            document.getElementById('total-deudas').innerText = formatMoneda(deuda);
-            document.getElementById('balance-total').innerText = formatMoneda((liq + cobranza) - deuda);
-
-            // Barra progreso cobranza (visual)
-            const metaCobro = cobranza > 0 ? (cobranza / (liq + cobranza)) * 100 : 0;
-            document.getElementById('barra-ahorro-real').style.width = Math.min(metaCobro, 100) + "%";
-        }
-
-        function renderizarCuentas() {
-            const cont = document.getElementById('lista-cuentas-sidebar');
-            cont.innerHTML = state.cuentas.map(c => `
-                <div class="flex justify-between items-center p-4 rounded-2xl bg-slate-50 border border-slate-100 group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm text-slate-400">
-                            <i class="fa-solid ${c.tipo.startsWith('pasivo') ? 'fa-credit-card' : 'fa-vault'}"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-xs font-black text-slate-700">${c.nombre}</span>
-                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">${c.tipo.split('-')[1]}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs font-black ${c.tipo.startsWith('pasivo') ? 'text-rose-500' : 'text-slate-900'}">${formatMoneda(c.saldoActual)}</span>
-                        <button onclick="eliminarCuenta('${c.id}')" class="opacity-0 group-hover:opacity-100 transition text-slate-300 hover:text-rose-500"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
-                    </div>
-                </div>
-            `).join('') || '<p class="text-center text-[10px] font-bold text-slate-300 py-4">Sin cuentas registradas</p>';
-        }
-
-        function renderizarTransacciones() {
-            const cont = document.getElementById('lista-transacciones');
-            let filtradas = state.transacciones;
+        // AUTOMATIZACIÓN INTELIGENTE
+        function autoProcessor() {
+            const hoy = new Date();
+            let last = st.lastAuto ? new Date(st.lastAuto) : new Date(hoy.getTime() - 86400000); // Ayer si es nuevo
             
-            if(state.filtroActual === 'mes') {
-                const ahora = new Date();
-                filtradas = state.transacciones.filter(t => {
-                    const f = new Date(t.fecha);
-                    return f.getMonth() === ahora.getMonth() && f.getFullYear() === ahora.getFullYear();
-                });
-            }
+            // Truco para evitar loop infinito en mismo día
+            if(hoy.toDateString() === last.toDateString()) return;
 
-            cont.innerHTML = filtradas.slice(0, 15).map(t => `
-                <div class="flex justify-between items-center p-5 bg-white rounded-3xl border border-slate-50 group hover:border-blue-100 hover:shadow-md transition">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 rounded-2xl ${t.tipo === 'ingreso' ? 'bg-emerald-50' : 'bg-rose-50'} flex items-center justify-center mr-4">
-                            <i class="fa-solid ${t.tipo === 'ingreso' ? 'fa-plus text-emerald-600' : 'fa-minus text-rose-500'}"></i>
+            let aplicados = 0;
+            // Recorrer días desde last hasta hoy
+            let cur = new Date(last.getTime() + 86400000);
+            while(cur <= hoy) {
+                const diaSem = cur.getDay(); // 0 Dom, 5 Vie
+                const diaMes = cur.getDate();
+
+                DEFAULTS.prog.forEach(p => {
+                    if((p.fr === 'sem' && p.dia === diaSem) || (p.fr === 'men' && p.dia === diaMes)) {
+                        ejecutarTx(p.tipo, `[AUTO] ${p.desc}`, p.m, p.o, p.d, p.cat, cur.toISOString());
+                        aplicados++;
+                    }
+                });
+                cur.setDate(cur.getDate() + 1);
+            }
+            st.lastAuto = hoy.toISOString();
+            save();
+            if(aplicados > 0) alert(`¡El sistema automatizó ${aplicados} movimientos fijos mientras no estabas!`);
+        }
+
+        // LÓGICA DE MOVIMIENTOS
+        function ejecutarTx(tipo, desc, m, o, d, cat, fecha = new Date().toISOString()) {
+            st.tx.unshift({ id: Date.now().toString() + Math.random(), tipo, desc, m, o, d, cat, f: fecha });
+            
+            // Afectación de saldos
+            const co = st.c.find(x => x.id === o);
+            const cd = st.c.find(x => x.id === d);
+
+            if(tipo === 'gasto' && co) {
+                if(co.tipo === 'banco') co.s -= m; // Pierdo dinero
+                else co.s += m; // Aumenta mi deuda (tarjeta/tienda)
+            } 
+            else if(tipo === 'ingreso' && cd) {
+                if(cd.tipo === 'banco' || cd.tipo === 'meta') cd.s += m;
+            }
+            else if(tipo === 'traspaso' && co && cd) {
+                // Sale de origen
+                if(co.tipo === 'banco') co.s -= m;
+                else if(co.tipo === 'cobrar') co.s -= m; // Me pagaron, ya me deben menos
+                
+                // Entra a destino
+                if(cd.tipo === 'banco') cd.s += m;
+                else if(cd.tipo === 'tarjeta' || cd.tipo === 'deuda') cd.s -= m; // Pagué deuda, debo menos
+                else if(cd.tipo === 'meta') cd.s += m;
+            }
+        }
+
+        // UI HANDLERS
+        function setTipoTx(t) {
+            document.getElementById('tx-tipo').value = t;
+            ['gasto', 'ingreso', 'traspaso'].forEach(x => {
+                document.getElementById(`btx-${x}`).className = `flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest ${x === t ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400'}`;
+            });
+            
+            const bo = document.getElementById('bloque-origen');
+            const bd = document.getElementById('bloque-destino');
+            const lo = document.getElementById('lbl-origen');
+            const ld = document.getElementById('lbl-destino');
+
+            if(t === 'gasto') { bo.style.display='block'; bd.style.display='none'; lo.innerText='Salió de / Pagué con (Banco/Tarjeta):'; }
+            if(t === 'ingreso') { bo.style.display='none'; bd.style.display='block'; ld.innerText='Entró a (Banco):'; }
+            if(t === 'traspaso') { bo.style.display='block'; bd.style.display='block'; lo.innerText='Origen (De dónde salió):'; ld.innerText='Destino (A dónde fue / Qué pagué):'; }
+        }
+
+        document.getElementById('form-tx').addEventListener('submit', e => {
+            e.preventDefault();
+            const t = document.getElementById('tx-tipo').value;
+            const d = document.getElementById('tx-desc').value;
+            const m = parseFloat(document.getElementById('tx-monto').value);
+            const c = document.getElementById('tx-cat').value;
+            const o = document.getElementById('tx-origen').value;
+            const des = document.getElementById('tx-destino').value;
+
+            ejecutarTx(t, d, m, o, des, c);
+            save(); updUI(); e.target.reset(); setTipoTx('gasto');
+        });
+
+        // RENDER
+        function updUI() {
+            let tLib = 0, tCob = 0, tDeu = 0;
+            st.c.forEach(c => {
+                if(c.tipo === 'banco') tLib += c.s;
+                else if(c.tipo === 'cobrar') tCob += c.s;
+                else if(c.tipo === 'tarjeta' || c.tipo === 'deuda') tDeu += c.s;
+            });
+
+            document.getElementById('dinero-libre').innerText = fmt(tLib);
+            document.getElementById('total-cobrar').innerText = fmt(tCob);
+            document.getElementById('total-deudas').innerText = fmt(tDeu);
+            document.getElementById('balance-total').innerText = fmt(tLib + tCob - tDeu);
+
+            // Cuentas List
+            document.getElementById('lista-cuentas').innerHTML = st.c.map(c => `
+                <div class="flex justify-between items-center p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-sm ${c.col}"><i class="fa-solid ${c.ic}"></i></div>
+                        <div>
+                            <p class="text-xs font-black text-slate-700">${c.nom}</p>
+                            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">${c.tipo}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-black ${c.tipo==='tarjeta'||c.tipo==='deuda'?'text-rose-500':(c.tipo==='cobrar'?'text-emerald-500':'text-slate-900')}">${fmt(c.s)}</span>
+                </div>
+            `).join('');
+
+            // Selects
+            const opts = st.c.map(c => `<option value="${c.id}">${c.nom} (${fmt(c.s)})</option>`).join('');
+            document.getElementById('tx-origen').innerHTML = opts;
+            document.getElementById('tx-destino').innerHTML = opts;
+
+            // Historial
+            let fTx = st.tx;
+            if(st.f === 'mes') {
+                const h = new Date();
+                fTx = st.tx.filter(x => new Date(x.f).getMonth() === h.getMonth() && new Date(x.f).getFullYear() === h.getFullYear());
+            }
+            document.getElementById('lista-txs').innerHTML = fTx.slice(0,20).map(x => `
+                <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm ${x.tipo==='gasto'?'text-rose-500':(x.tipo==='ingreso'?'text-emerald-500':'text-blue-500')}">
+                            <i class="fa-solid ${x.tipo==='gasto'?'fa-arrow-up':(x.tipo==='ingreso'?'fa-arrow-down':'fa-right-left')}"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-black text-slate-800">${t.descripcion}</p>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">${t.categoria} • ${new Date(t.fecha).toLocaleDateString()}</p>
+                            <p class="text-sm font-black text-slate-800">${x.desc}</p>
+                            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">${x.cat} • ${new Date(x.f).toLocaleDateString()}</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-6">
-                        <span class="text-base font-black ${t.tipo === 'ingreso' ? 'text-emerald-600' : 'text-slate-900'}">
-                            ${t.tipo === 'ingreso' ? '+' : '-'}${formatMoneda(t.monto)}
-                        </span>
-                        <button onclick="eliminarTx('${t.id}')" class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
+                    <span class="text-sm font-black ${x.tipo==='ingreso'?'text-emerald-600':(x.tipo==='traspaso'?'text-blue-600':'text-slate-900')}">${x.tipo==='ingreso'?'+':'-'}${fmt(x.m)}</span>
                 </div>
-            `).join('') || '<div class="text-center py-10"><i class="fa-solid fa-ghost text-4xl text-slate-100 mb-4"></i><p class="text-slate-300 font-bold italic">Nada por aquí, Rodolfo...</p></div>';
-        }
+            `).join('') || '<p class="text-xs text-center text-slate-400 font-bold">Sin movimientos</p>';
 
-        function renderizarRecurrentes() {
-            const cont = document.getElementById('lista-recurrentes');
-            cont.innerHTML = state.recurrentes.map(r => `
-                <div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 group">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full ${r.tipo === 'ingreso' ? 'bg-emerald-400' : 'bg-rose-400'}"></div>
-                        <span class="text-xs font-bold text-slate-600">${r.descripcion}</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs font-black">${formatMoneda(r.monto)}</span>
-                        <button onclick="eliminarRecurrente('${r.id}')" class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-xmark text-[10px]"></i></button>
-                    </div>
+            // Programados estáticos
+            document.getElementById('lista-programados').innerHTML = DEFAULTS.prog.map(p => `
+                <div class="flex justify-between items-center text-[10px] p-2 bg-slate-50 rounded-lg">
+                    <span class="font-bold text-slate-600">${p.desc} (${p.fr==='sem'?'Viernes':'Día '+p.dia})</span>
+                    <span class="font-black text-blue-600">${fmt(p.m)}</span>
                 </div>
-            `).join('') || '<p class="text-[10px] text-slate-300 font-bold italic text-center py-2">Nada programado</p>';
+            `).join('');
+
+            updateChart();
         }
 
-        function renderizarSelects() {
-            const options = state.cuentas.map(c => `<option value="${c.id}">${c.nombre} (${formatMoneda(c.saldoActual)})</option>`).join('');
-            document.getElementById('cuentaSelect').innerHTML = options;
-            document.getElementById('cuenta-recurrente').innerHTML = options;
+        function filtrar(t) {
+            st.f = t;
+            document.getElementById('f-tod').className = t==='tod'?'px-3 py-2 bg-white shadow-sm rounded-lg text-slate-900':'px-3 py-2 text-slate-400';
+            document.getElementById('f-mes').className = t==='mes'?'px-3 py-2 bg-white shadow-sm rounded-lg text-slate-900':'px-3 py-2 text-slate-400';
+            updUI();
         }
 
-        function actualizarGrafica() {
+        let chrt;
+        function updateChart() {
             const ctx = document.getElementById('chartGastos').getContext('2d');
-            const dataMap = {};
-            state.transacciones.filter(t => t.tipo === 'gasto').forEach(t => {
-                dataMap[t.categoria] = (dataMap[t.categoria] || 0) + t.monto;
-            });
-
-            if(chartInstancia) chartInstancia.destroy();
-            chartInstancia = new Chart(ctx, {
+            const map = {};
+            st.tx.filter(t => t.tipo === 'gasto').forEach(t => map[t.cat] = (map[t.cat]||0) + t.m);
+            if(chrt) chrt.destroy();
+            chrt = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: Object.keys(dataMap),
-                    datasets: [{
-                        data: Object.values(dataMap),
-                        backgroundColor: ['#2563eb', '#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#94a3b8'],
-                        borderWidth: 0,
-                        hoverOffset: 15
-                    }]
-                },
-                options: {
-                    cutout: '75%',
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 10, family: 'Outfit', weight: 'bold' } } }
-                    }
-                }
+                data: { labels: Object.keys(map), datasets: [{ data: Object.values(map), backgroundColor: ['#2563eb', '#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#94a3b8'], borderWidth:0 }] },
+                options: { cutout: '75%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 9, family: 'Outfit', weight: 'bold' } } } } }
             });
         }
 
-        // UTILIDADES
-        function formatMoneda(n) {
-            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n);
+        // SALDOS REALES
+        function editarSaldos() {
+            const div = document.getElementById('form-saldos-container');
+            div.innerHTML = st.c.map(c => `
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">${c.nom} (${c.tipo})</label>
+                    <input type="number" id="saldo-edit-${c.id}" value="${c.s}" step="0.01" class="w-full bg-slate-50 border-none rounded-2xl p-4 font-black outline-none text-blue-700">
+                </div>
+            `).join('');
+            document.getElementById('modal-saldos').classList.remove('hidden');
+        }
+        function cerrarModalSaldos() { document.getElementById('modal-saldos').classList.add('hidden'); }
+        function guardarSaldos() {
+            st.c.forEach(c => {
+                const val = parseFloat(document.getElementById(`saldo-edit-${c.id}`).value) || 0;
+                c.s = val;
+            });
+            save(); updUI(); cerrarModalSaldos();
         }
 
-        function guardarDatos() {
-            localStorage.setItem('fin_rod_cuentas', JSON.stringify(state.cuentas));
-            localStorage.setItem('fin_rod_txs', JSON.stringify(state.transacciones));
-            localStorage.setItem('fin_rod_rec', JSON.stringify(state.recurrentes));
-        }
-
-        function filtrarHistorial(filtro) {
-            state.filtroActual = filtro;
-            document.getElementById('btn-filtro-todos').className = filtro === 'todos' ? 'px-4 py-2 bg-white shadow-sm rounded-lg text-slate-900' : 'px-4 py-2 text-slate-400';
-            document.getElementById('btn-filtro-mes').className = filtro === 'mes' ? 'px-4 py-2 bg-white shadow-sm rounded-lg text-slate-900' : 'px-4 py-2 text-slate-400';
-            renderizarTransacciones();
-        }
-
-        // MODALES
-        function abrirModalCuenta() { document.getElementById('modal-cuenta').classList.remove('hidden'); }
-        function cerrarModalCuenta() { document.getElementById('modal-cuenta').classList.add('hidden'); }
-        function abrirModalRecurrente() { document.getElementById('modal-recurrente').classList.remove('hidden'); }
-        function cerrarModalRecurrente() { document.getElementById('modal-recurrente').classList.add('hidden'); }
-        function cerrarModalAsesor() { document.getElementById('modal-asesor').classList.add('hidden'); }
-
-        // ELIMINAR ELEMENTOS
-        function eliminarTx(id) { if(confirm("¿Borrar este movimiento?")) { state.transacciones = state.transacciones.filter(t => t.id !== id); recalcularSaldos(); guardarDatos(); actualizarUI(); } }
-        function eliminarCuenta(id) { if(confirm("¿Cerrar esta cuenta? Se perderá el saldo actual.")) { state.cuentas = state.cuentas.filter(c => c.id !== id); guardarDatos(); actualizarUI(); } }
-        function eliminarRecurrente(id) { state.recurrentes = state.recurrentes.filter(r => r.id !== id); guardarDatos(); actualizarUI(); }
-
-        // ASESOR IA (CONSOLA INTELIGENTE)
-        async function consultarAsesorIA() {
-            const m = document.getElementById('modal-asesor');
-            const c = document.getElementById('contenido-asesor');
-            const l = document.getElementById('loader-asesor');
-            const t = document.getElementById('texto-asesor');
-
-            m.classList.remove('hidden');
-            c.classList.add('hidden');
-            l.classList.remove('hidden');
-
-            const liq = state.cuentas.filter(c => c.tipo === 'activo-efectivo').reduce((a, b) => a + b.saldoActual, 0);
-            const deu = state.cuentas.filter(c => c.tipo.startsWith('pasivo')).reduce((a, b) => a + b.saldoActual, 0);
-            const cob = state.cuentas.filter(c => c.tipo === 'activo-cobrar').reduce((a, b) => a + b.saldoActual, 0);
-            
-            const resumen = `Lana libre: $${liq}, Me deben: $${cob}, Debo (Tarjetas/Meses): $${deu}. Rodolfo toca en un grupo musical y recibe nómina.`;
-
-            try {
-                // Simulación de respuesta si no hay API Key, o llamada real
-                if(!CONFIG.API_KEY) {
-                    setTimeout(() => {
-                        t.innerHTML = `Rodolfo, tienes <b>${formatMoneda(liq)}</b> libres. Ojo con los <b>${formatMoneda(deu)}</b> que debes en tarjetas; asegúrate de que lo que te deben (<b>${formatMoneda(cob)}</b>) caiga pronto para liquidar eso. ¡A darle con el grupo!`;
-                        l.classList.add('hidden');
-                        c.classList.remove('hidden');
-                    }, 1500);
-                    return;
-                }
-                
-                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${CONFIG.API_KEY}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ contents: [{ parts: [{ text: resumen + " Dame un consejo pro, amigable y directo en 2 párrafos." }] }] })
-                });
-                const res = await resp.json();
-                t.innerHTML = res.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-                l.classList.add('hidden');
-                c.classList.remove('hidden');
-            } catch(e) {
-                t.innerHTML = "No pude conectar con el servidor de inteligencia. Revisa tu internet o la API Key.";
-                l.classList.add('hidden');
-                c.classList.remove('hidden');
-            }
-        }
+        setTipoTx('gasto');
     </script>
 </body>
 </html>
