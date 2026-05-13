@@ -227,11 +227,11 @@
                 { id: 'mp', nom: 'Mercado Pago', tipo: 'banco', s: 0, ic: 'fa-handshake', col: 'text-blue-500' },
                 { id: 'caja', nom: 'Caja Popular', tipo: 'banco', s: 0, ic: 'fa-piggy-bank', col: 'text-teal-600' },
                 
-                { id: 'klar', nom: 'Klar', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-slate-800' },
-                { id: 'nu', nom: 'Nu', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-purple-600' },
-                { id: 'plata', nom: 'Plata', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-slate-500' },
+                { id: 'klar', nom: 'Klar (Fin de mes)', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-slate-800' },
+                { id: 'nu', nom: 'Nu (Fin de mes)', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-purple-600' },
+                { id: 'plata', nom: 'Plata (Fin de mes)', tipo: 'tarjeta', s: 0, ic: 'fa-credit-card', col: 'text-slate-500' },
                 
-                { id: 'liverpool', nom: 'Liverpool', tipo: 'deuda', s: 0, ic: 'fa-bag-shopping', col: 'text-pink-600' },
+                { id: 'liverpool', nom: 'Liverpool (Julio / Fin mes)', tipo: 'deuda', s: 0, ic: 'fa-bag-shopping', col: 'text-pink-600' },
                 { id: 'coppel', nom: 'Coppel', tipo: 'deuda', s: 0, ic: 'fa-store', col: 'text-yellow-500' },
                 { id: 'mama', nom: 'Préstamo Mamá', tipo: 'deuda', s: 0, ic: 'fa-person-breastfeeding', col: 'text-rose-400' },
                 
@@ -244,7 +244,7 @@
             prog: [
                 { id: 'p1', desc: 'Nómina Banorte', m: 2200, tipo: 'ingreso', o: '', d: 'banorte', cat: 'Nómina', fr: 'sem', dia: 5 },
                 { id: 'p2', desc: 'Bono Efectivo', m: 985, tipo: 'ingreso', o: '', d: 'efectivo', cat: 'Nómina', fr: 'sem', dia: 5 },
-                { id: 'p3', desc: 'Tanda Semanal', m: 500, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Tanda', fr: 'sem', dia: 5 },
+                { id: 'p3', desc: 'Tanda Semanal (Borrar en 1 sem)', m: 500, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Tanda', fr: 'sem', dia: 5 },
                 
                 { id: 'p4', desc: 'Plan Celular', m: 1832, tipo: 'gasto', o: 'banorte', d: '', cat: 'Servicios', fr: 'men', dia: 15 },
                 { id: 'p5', desc: 'Renta Casa', m: 1850, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Vivienda', fr: 'men', dia: 1 },
@@ -254,8 +254,9 @@
         };
 
         let st = {
-            c: JSON.parse(localStorage.getItem('fr_c')) || DEFAULTS.cuentas,
+            c: localStorage.getItem('fr_c_v2') ? JSON.parse(localStorage.getItem('fr_c_v2')) : DEFAULTS.cuentas,
             tx: JSON.parse(localStorage.getItem('fr_tx')) || [],
+            prog: localStorage.getItem('fr_p_v2') ? JSON.parse(localStorage.getItem('fr_p_v2')) : DEFAULTS.prog,
             lastAuto: localStorage.getItem('fr_auto') || null,
             f: 'tod'
         };
@@ -280,8 +281,9 @@
         }
 
         function save() {
-            localStorage.setItem('fr_c', JSON.stringify(st.c));
+            localStorage.setItem('fr_c_v2', JSON.stringify(st.c));
             localStorage.setItem('fr_tx', JSON.stringify(st.tx));
+            localStorage.setItem('fr_p_v2', JSON.stringify(st.prog));
             localStorage.setItem('fr_auto', st.lastAuto);
         }
 
@@ -302,7 +304,7 @@
                 const diaSem = cur.getDay(); // 0 Dom, 5 Vie
                 const diaMes = cur.getDate();
 
-                DEFAULTS.prog.forEach(p => {
+                st.prog.forEach(p => {
                     if((p.fr === 'sem' && p.dia === diaSem) || (p.fr === 'men' && p.dia === diaMes)) {
                         ejecutarTx(p.tipo, `[AUTO] ${p.desc}`, p.m, p.o, p.d, p.cat, cur.toISOString());
                         aplicados++;
@@ -426,15 +428,25 @@
                 </div>
             `).join('') || '<p class="text-xs text-center text-slate-400 font-bold">Sin movimientos</p>';
 
-            // Programados estáticos
-            document.getElementById('lista-programados').innerHTML = DEFAULTS.prog.map(p => `
-                <div class="flex justify-between items-center text-[10px] p-2 bg-slate-50 rounded-lg">
+            // Programados dinámicos
+            document.getElementById('lista-programados').innerHTML = st.prog.map(p => `
+                <div class="flex justify-between items-center text-[10px] p-2 bg-slate-50 rounded-lg group">
                     <span class="font-bold text-slate-600">${p.desc} (${p.fr==='sem'?'Viernes':'Día '+p.dia})</span>
-                    <span class="font-black text-blue-600">${fmt(p.m)}</span>
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-blue-600">${fmt(p.m)}</span>
+                        <button onclick="eliminarProg('${p.id}')" class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 </div>
-            `).join('');
+            `).join('') || '<p class="text-[10px] font-bold text-slate-400 italic">No hay movimientos fijos.</p>';
 
             updateChart();
+        }
+
+        function eliminarProg(id) {
+            if(confirm("¿Eliminar este movimiento automático para siempre? (Ej. Si ya acabaste de pagar la tanda)")) {
+                st.prog = st.prog.filter(p => p.id !== id);
+                save(); updUI();
+            }
         }
 
         function filtrar(t) {
