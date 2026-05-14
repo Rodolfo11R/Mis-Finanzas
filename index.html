@@ -60,15 +60,35 @@
     </div>
 
     <div class="max-w-6xl mx-auto p-4 sm:p-6 animate-in">
+        
+        <!-- WIDGETS SUPERIORES -->
+        <div class="flex justify-between items-center mb-6 gap-4">
+            <div class="bg-white rounded-[1.5rem] card-shadow px-5 py-3 flex items-center gap-4 border border-slate-100 flex-1 sm:flex-none">
+                <i class="fa-regular fa-clock text-blue-500 text-2xl"></i>
+                <div>
+                    <p class="text-xl font-black text-slate-800 leading-none tracking-tight" id="live-clock">--:--</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1" id="live-date">Cargando...</p>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-[1.5rem] card-shadow px-5 py-3 flex items-center gap-4 border border-slate-100 flex-1 sm:flex-none">
+                <i class="fa-solid fa-cloud text-amber-500 text-2xl" id="weather-icon"></i>
+                <div>
+                    <p class="text-xl font-black text-slate-800 leading-none tracking-tight" id="weather-temp">--°C</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1" id="weather-desc">Clima Local</p>
+                </div>
+            </div>
+        </div>
+
         <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-[2rem] card-shadow">
-            <div>
-                <h1 class="text-2xl font-black text-slate-900 flex items-center tracking-tight">
-                    <span class="bg-blue-600 text-white p-2 rounded-xl mr-3 shadow-lg shadow-blue-200">
-                        <i class="fa-solid fa-bolt"></i>
-                    </span>
-                    Finanzas Rodolfo
-                </h1>
-                <p class="text-slate-400 text-xs font-bold ml-12 uppercase tracking-widest mt-1">Control de Deudas y Patrimonio</p>
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-gradient-to-tr from-blue-700 to-blue-400 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/40 transform -rotate-6">
+                    <i class="fa-solid fa-fingerprint text-white text-2xl transform rotate-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-black text-slate-900 tracking-tighter italic">FINANZAS RODOLFO</h1>
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Gestor Inteligente de Patrimonio</p>
+                </div>
             </div>
             <div class="mt-4 sm:mt-0 flex gap-3 w-full sm:w-auto">
                 <button onclick="editarSaldos()" class="flex-1 sm:flex-none bg-amber-100 text-amber-700 px-5 py-3 rounded-2xl hover:bg-amber-200 transition text-xs font-black flex items-center justify-center uppercase tracking-widest">
@@ -342,7 +362,39 @@
             } else { alert("PIN Incorrecto"); clearPin(); }
         }
 
-        function initApp() { autoProcessor(); updUI(); }
+        function initApp() { 
+            autoProcessor(); 
+            updUI(); 
+            iniciarWidgets();
+        }
+
+        function iniciarWidgets() {
+            function updateClock() {
+                const d = new Date();
+                document.getElementById('live-clock').innerText = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                document.getElementById('live-date').innerText = d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            // Clima
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current_weather=true`)
+                    .then(r => r.json()).then(d => {
+                        const w = d.current_weather;
+                        document.getElementById('weather-temp').innerText = `${Math.round(w.temperature)}°C`;
+                        let ic = 'fa-cloud text-slate-400', desc = 'Nublado';
+                        if(w.weathercode === 0) { ic = 'fa-sun text-amber-500'; desc = 'Despejado'; }
+                        else if(w.weathercode <= 3) { ic = 'fa-cloud-sun text-blue-400'; desc = 'Parcial'; }
+                        else if(w.weathercode <= 69) { ic = 'fa-cloud-rain text-indigo-400'; desc = 'Lluvia'; }
+                        document.getElementById('weather-icon').className = `fa-solid ${ic} text-2xl`;
+                        document.getElementById('weather-desc').innerText = desc;
+                    });
+                });
+            }
+        }
+
         function fmt(n) { return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n||0); }
 
         function autoProcessor() {
