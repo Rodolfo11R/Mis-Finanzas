@@ -560,6 +560,38 @@
 
             const consejos = [];
             const hoy = new Date();
+            
+            // 1. CALCULADORA DE RESCATE MENSUAL (IA AVANZADA)
+            let ingRestantes = 0, fijosRestantes = 0;
+            let dCur = new Date();
+            // Evitar contar el día de hoy si ya corrió la automatización (pero por si acaso, empezamos mañana)
+            dCur.setDate(dCur.getDate() + 1); 
+            while(dCur.getMonth() === hoy.getMonth()) {
+                st.prog.forEach(p => {
+                    if(p.fr === 'sem' && p.dia === dCur.getDay()) {
+                        if(p.tipo === 'ingreso') ingRestantes += p.m;
+                        if(p.tipo === 'gasto' || p.tipo === 'traspaso') fijosRestantes += p.m;
+                    }
+                    if(p.fr === 'men' && p.dia === dCur.getDate()) {
+                        if(p.tipo === 'ingreso') ingRestantes += p.m;
+                        if(p.tipo === 'gasto' || p.tipo === 'traspaso') fijosRestantes += p.m;
+                    }
+                });
+                dCur.setDate(dCur.getDate() + 1);
+            }
+
+            let bActual = 0;
+            st.c.filter(c=>c.tipo==='banco').forEach(c=>bActual+=c.s);
+            let disponibleProyectado = bActual + ingRestantes - fijosRestantes;
+
+            if(disponibleProyectado < 0) {
+                 consejos.push({ i: 'fa-triangle-exclamation text-rose-500 text-xl animate-pulse', t: `<span class="font-bold text-rose-300 uppercase">¡Alerta de Quiebra!</span> Este mes no te alcanza. Te faltan ${fmt(Math.abs(disponibleProyectado))} para cubrir tus fijos. ¡Cobra a Brayan o genera ingresos extra urgente!` });
+            } else if (bActual === 0) {
+                 consejos.push({ i: 'fa-brain text-indigo-400 text-xl', t: `<span class="font-bold text-indigo-300">Estrategia del Mes:</span> Aunque hoy tienes $0, te faltan cobrar ${fmt(ingRestantes)} de tus semanas. Después de tus pagos fijos de fin de mes, te van a sobrar <span class="font-black text-emerald-400">${fmt(disponibleProyectado)}</span>. ¡Úsalo TODO para liquidar Mercado Pago y bajarle a Nu!` });
+            } else {
+                 consejos.push({ i: 'fa-rocket text-indigo-400 text-xl', t: `<span class="font-bold text-indigo-300">Proyección:</span> Vas a cerrar el mes con <span class="font-black text-emerald-400">${fmt(disponibleProyectado)}</span> libres. Prioriza matar tus deudas de tarjetas para no generar intereses.` });
+            }
+
             let gastosMensos = 0, gastosComida = 0;
             st.tx.forEach(t => {
                 const dTx = new Date(t.f);
@@ -570,30 +602,16 @@
             });
 
             if(gastosMensos > 500) {
-                consejos.push({ i: 'fa-triangle-exclamation text-rose-400', t: `¡Ojo! Llevas ${fmt(gastosMensos)} en "Cosas Mensas" este mes. Bájale a los lujos si quieres pagar rápido tu equipo y deudas.` });
-            } else if (gastosMensos > 0) {
-                consejos.push({ i: 'fa-gamepad text-amber-400', t: `Has gastado ${fmt(gastosMensos)} en tonterías. Vamos bien, pero cuida tu lana.` });
-            }
-
-            if(gastosComida > 1500) {
-                consejos.push({ i: 'fa-burger text-orange-400', t: `Llevas ${fmt(gastosComida)} en pura comida de calle/tacos. ¡Intenta cocinar más para ahorrar!` });
-            }
-
-            if(flujo < 0) {
-                consejos.push({ i: 'fa-skull-crossbones text-rose-500', t: `PELIGRO: Tus pagos fijos ahogan tus ingresos por ${fmt(Math.abs(flujo))}. ¡Genera algo extra urgente o no vas a salir!` });
-            } else if (flujo > 5000) {
-                consejos.push({ i: 'fa-hand-holding-dollar text-emerald-400', t: `Excelente: Te sobran ${fmt(flujo)} fijos al mes. Úsalo para meterle un abono extra a Liverpool o Plata.` });
-            } else {
-                consejos.push({ i: 'fa-scale-balanced text-blue-300', t: `Tu flujo libre es de ${fmt(flujo)} al mes. Admińistralo bien para despensa y eventualidades, no gastes de más.` });
+                consejos.push({ i: 'fa-triangle-exclamation text-rose-400', t: `Llevas ${fmt(gastosMensos)} en "Cosas Mensas". Corta esto de raíz para salir de tu descapitalización.` });
+            } else if (gastosComida > 1000) {
+                consejos.push({ i: 'fa-burger text-orange-400', t: `Llevas ${fmt(gastosComida)} en comida/calle. Cocina en casa y usa ese ahorro para abonar a Plata o Liverpool.` });
             }
 
             let meDeben = 0;
             st.c.filter(c => c.tipo === 'cobrar').forEach(c => meDeben += c.s);
             if(meDeben > 10000) {
-                consejos.push({ i: 'fa-bullhorn text-indigo-300', t: `Tienes ${fmt(meDeben)} atorados en la calle. Mándale un WhatsApp a Brayan o la persona del teléfono.` });
+                consejos.push({ i: 'fa-bullhorn text-indigo-300', t: `Ese dinero atorado (${fmt(meDeben)}) es tu boleto de salida. Exige pagos parciales semanales a tus deudores.` });
             }
-
-            if(consejos.length === 0) consejos.push({ i: 'fa-check-double text-emerald-400', t: `Tus finanzas van por buen camino. Sigue abonando puntualmente.` });
 
             document.getElementById('ai-consejos').innerHTML = consejos.slice(0,3).map(c => `
                 <div class="bg-white/10 rounded-xl p-3 flex items-start gap-3 backdrop-blur-sm border border-white/5">
