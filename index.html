@@ -186,25 +186,29 @@
             <div class="lg:col-span-7 space-y-8">
                 
                 <!-- INTELIGENCIA FINANCIERA -->
-                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2.5rem] card-shadow p-8 text-white relative overflow-hidden">
-                    <i class="fa-solid fa-brain absolute -right-10 -bottom-10 text-9xl opacity-5"></i>
-                    <h2 class="text-sm font-black uppercase text-indigo-300 tracking-widest mb-6"><i class="fa-solid fa-bolt mr-2"></i> Análisis Inteligente de tu Deuda</h2>
+                <div class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 rounded-[2.5rem] card-shadow p-8 text-white relative overflow-hidden shadow-2xl shadow-indigo-500/20">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+                    <i class="fa-solid fa-robot absolute -right-4 -bottom-4 text-9xl opacity-10"></i>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-white/10 rounded-2xl p-5 backdrop-blur-md border border-white/10">
-                            <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest">Ingreso Fijo (Mensual)</p>
-                            <p class="text-2xl font-black text-emerald-400 mt-1" id="ai-ingresos">$0</p>
-                        </div>
-                        <div class="bg-white/10 rounded-2xl p-5 backdrop-blur-md border border-white/10">
-                            <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest">Gasto Fijo (Mensual)</p>
-                            <p class="text-2xl font-black text-rose-400 mt-1" id="ai-gastos">$0</p>
-                        </div>
+                    <h2 class="text-sm font-black uppercase text-indigo-300 tracking-widest mb-6 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>
+                        Asesor Financiero Pro
+                    </h2>
+                    
+                    <div id="ai-consejos" class="space-y-3 mb-6">
+                        <!-- Consejos dinámicos -->
                     </div>
-                    
-                    <div class="bg-white/5 rounded-2xl p-5 backdrop-blur-md">
-                        <p class="text-xs font-bold text-indigo-200 mb-3 uppercase tracking-widest">Proyección de Deudas Mayores:</p>
-                        <div id="ai-proyeccion" class="space-y-3">
-                            <!-- Generado dinámicamente -->
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-md border border-white/5">
+                            <p class="text-[9px] font-bold text-indigo-200 uppercase tracking-widest">Flujo Libre Mensual</p>
+                            <p class="text-xl font-black text-emerald-400 mt-1" id="ai-flujo">$0</p>
+                            <p class="text-[9px] text-slate-400 mt-1">Después de pagar tus fijos</p>
+                        </div>
+                        <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-md border border-white/5">
+                            <p class="text-[9px] font-bold text-indigo-200 uppercase tracking-widest">Deuda Total Restante</p>
+                            <p class="text-xl font-black text-rose-400 mt-1" id="ai-deuda-total">$0</p>
+                            <p class="text-[9px] text-slate-400 mt-1" id="ai-deuda-tiempo">--</p>
                         </div>
                     </div>
                 </div>
@@ -526,33 +530,77 @@
         }
 
         function updateAnalisis() {
-            // Ingresos y Gastos fijos
             let ing = 0, gas = 0;
             st.prog.forEach(p => {
                 let mMes = p.fr === 'sem' ? p.m * 4 : p.m;
                 if(p.tipo === 'ingreso') ing += mMes;
-                if(p.tipo === 'gasto' || p.tipo === 'traspaso') gas += mMes; // Traspaso a deuda es un gasto de flujo
+                if(p.tipo === 'gasto' || p.tipo === 'traspaso') gas += mMes;
             });
-            document.getElementById('ai-ingresos').innerText = fmt(ing);
-            document.getElementById('ai-gastos').innerText = fmt(gas);
-
-            // Proyecciones de deuda
-            let html = "";
-            st.c.filter(c => c.tipo === 'deuda' || c.tipo === 'tarjeta').forEach(c => {
-                if(c.s > 0) {
-                    // Buscar si hay pago programado
-                    let abono = 0;
-                    st.prog.forEach(p => { if(p.tipo === 'traspaso' && p.d === c.id) abono += (p.fr==='sem'?p.m*4:p.m); });
-                    
-                    if(abono > 0) {
-                        let meses = Math.ceil(c.s / abono);
-                        html += `<div class="flex justify-between text-xs text-white"><span class="font-bold">${c.nom}</span> <span class="text-indigo-300">Libre en ${meses} mes(es)</span></div>`;
-                    } else {
-                        html += `<div class="flex justify-between text-xs text-white opacity-50"><span class="font-bold">${c.nom}</span> <span>Sin abono fijo</span></div>`;
-                    }
+            
+            const flujo = ing - gas;
+            document.getElementById('ai-flujo').innerText = fmt(flujo);
+            
+            let tDeuda = 0;
+            st.c.filter(c => c.tipo === 'deuda' || c.tipo === 'tarjeta').forEach(c => tDeuda += c.s);
+            document.getElementById('ai-deuda-total').innerText = fmt(tDeuda);
+            
+            let tAbonos = 0;
+            st.prog.forEach(p => { 
+                if(p.tipo === 'traspaso' && st.c.find(c => c.id === p.d && (c.tipo === 'deuda' || c.tipo === 'tarjeta'))) {
+                    tAbonos += (p.fr==='sem'?p.m*4:p.m);
                 }
             });
-            document.getElementById('ai-proyeccion').innerHTML = html || '<span class="text-xs text-emerald-400 font-bold">¡No hay deudas activas!</span>';
+            
+            if(tAbonos > 0 && tDeuda > 0) {
+                const mTotal = Math.ceil(tDeuda / tAbonos);
+                document.getElementById('ai-deuda-tiempo').innerText = `Libre en aprox. ${mTotal} meses`;
+            } else {
+                document.getElementById('ai-deuda-tiempo').innerText = tDeuda > 0 ? "⚠️ ¡Ojo! Sin abonos fijos programados" : "¡Eres libre de deudas!";
+            }
+
+            const consejos = [];
+            const hoy = new Date();
+            let gastosMensos = 0, gastosComida = 0;
+            st.tx.forEach(t => {
+                const dTx = new Date(t.f);
+                if(dTx.getMonth() === hoy.getMonth() && dTx.getFullYear() === hoy.getFullYear() && t.tipo === 'gasto') {
+                    if(t.cat === 'Cosas Mensas') gastosMensos += t.m;
+                    if(t.cat === 'Comida') gastosComida += t.m;
+                }
+            });
+
+            if(gastosMensos > 500) {
+                consejos.push({ i: 'fa-triangle-exclamation text-rose-400', t: `¡Ojo! Llevas ${fmt(gastosMensos)} en "Cosas Mensas" este mes. Bájale a los lujos si quieres pagar rápido tu equipo y deudas.` });
+            } else if (gastosMensos > 0) {
+                consejos.push({ i: 'fa-gamepad text-amber-400', t: `Has gastado ${fmt(gastosMensos)} en tonterías. Vamos bien, pero cuida tu lana.` });
+            }
+
+            if(gastosComida > 1500) {
+                consejos.push({ i: 'fa-burger text-orange-400', t: `Llevas ${fmt(gastosComida)} en pura comida de calle/tacos. ¡Intenta cocinar más para ahorrar!` });
+            }
+
+            if(flujo < 0) {
+                consejos.push({ i: 'fa-skull-crossbones text-rose-500', t: `PELIGRO: Tus pagos fijos ahogan tus ingresos por ${fmt(Math.abs(flujo))}. ¡Genera algo extra urgente o no vas a salir!` });
+            } else if (flujo > 5000) {
+                consejos.push({ i: 'fa-hand-holding-dollar text-emerald-400', t: `Excelente: Te sobran ${fmt(flujo)} fijos al mes. Úsalo para meterle un abono extra a Liverpool o Plata.` });
+            } else {
+                consejos.push({ i: 'fa-scale-balanced text-blue-300', t: `Tu flujo libre es de ${fmt(flujo)} al mes. Admińistralo bien para despensa y eventualidades, no gastes de más.` });
+            }
+
+            let meDeben = 0;
+            st.c.filter(c => c.tipo === 'cobrar').forEach(c => meDeben += c.s);
+            if(meDeben > 10000) {
+                consejos.push({ i: 'fa-bullhorn text-indigo-300', t: `Tienes ${fmt(meDeben)} atorados en la calle. Mándale un WhatsApp a Brayan o la persona del teléfono.` });
+            }
+
+            if(consejos.length === 0) consejos.push({ i: 'fa-check-double text-emerald-400', t: `Tus finanzas van por buen camino. Sigue abonando puntualmente.` });
+
+            document.getElementById('ai-consejos').innerHTML = consejos.slice(0,3).map(c => `
+                <div class="bg-white/10 rounded-xl p-3 flex items-start gap-3 backdrop-blur-sm border border-white/5">
+                    <i class="fa-solid ${c.i} mt-0.5"></i>
+                    <p class="text-[11px] font-medium leading-relaxed text-indigo-50">${c.t}</p>
+                </div>
+            `).join('');
         }
 
         function eliminarProg(id) { if(confirm("¿Eliminar automático?")) { st.prog = st.prog.filter(p => p.id !== id); save(); updUI(); } }
