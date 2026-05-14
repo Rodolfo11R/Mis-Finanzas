@@ -304,17 +304,17 @@
                 { id: 'p1', desc: 'Nómina Banorte', m: 2200, tipo: 'ingreso', o: '', d: 'banorte', cat: 'Nómina', fr: 'sem', dia: 5 },
                 { id: 'p2', desc: 'Bono Efectivo', m: 985, tipo: 'ingreso', o: '', d: 'efectivo', cat: 'Nómina', fr: 'sem', dia: 5 },
                 
-                { id: 'p4', desc: 'Plan Celular', m: 1832, tipo: 'gasto', o: 'banorte', d: '', cat: 'Servicios', fr: 'men', dia: 4 },
+                { id: 'p4', desc: 'Plan Celular', m: 1832, tipo: 'gasto', o: 'banorte', d: '', cat: 'Servicios', fr: 'men', dia: 1 },
                 { id: 'p5', desc: 'Renta Casa', m: 1850, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Vivienda', fr: 'men', dia: 1 },
                 
                 { id: 'p6', desc: 'Pago Mac Mamá', m: 1775, tipo: 'traspaso', o: 'banorte', d: 'mama_pc', cat: 'Equipo', fr: 'men', dia: 1 },
                 { id: 'p7', desc: 'Abono Mamá Gral', m: 1200, tipo: 'traspaso', o: 'banorte', d: 'mama_gral', cat: 'Deudas', fr: 'men', dia: 30 },
-                { id: 'p8', desc: 'Abono Coppel', m: 105, tipo: 'traspaso', o: 'banorte', d: 'coppel', cat: 'Deudas', fr: 'men', dia: 15 }
+                { id: 'p8', desc: 'Abono Coppel', m: 105, tipo: 'traspaso', o: 'banorte', d: 'coppel', cat: 'Deudas', fr: 'men', dia: 30 }
             ]
         };
 
         // LLAVES DE VERSIÓN PARA FORZAR EL NUEVO STATE
-        const V = "v7";
+        const V = "v8";
         let st = {
             c: localStorage.getItem(`fr_c_${V}`) ? JSON.parse(localStorage.getItem(`fr_c_${V}`)) : DEFAULTS.cuentas,
             tx: JSON.parse(localStorage.getItem('fr_tx')) || [],
