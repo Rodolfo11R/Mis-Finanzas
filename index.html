@@ -286,15 +286,15 @@
                 { id: 'caja', nom: 'Caja Popular', tipo: 'banco', s: 0, ic: 'fa-piggy-bank', col: 'text-teal-600' },
                 
                 { id: 'nu', nom: 'Nu (Deuda)', tipo: 'tarjeta', s: 2063.74, ic: 'fa-credit-card', col: 'text-purple-600' },
-                { id: 'plata', nom: 'Plata (Deuda)', tipo: 'tarjeta', s: 5500, ic: 'fa-credit-card', col: 'text-slate-500' },
+                { id: 'plata', nom: 'Plata (Pago Mayo: $1800)', tipo: 'tarjeta', s: 5500, ic: 'fa-credit-card', col: 'text-slate-500' },
                 { id: 'mp', nom: 'Mercado Pago (Deuda)', tipo: 'tarjeta', s: 850, ic: 'fa-handshake', col: 'text-blue-500' },
                 
                 { id: 'liverpool', nom: 'Liverpool (Deuda)', tipo: 'deuda', s: 11619, ic: 'fa-bag-shopping', col: 'text-pink-600' },
-                { id: 'coppel', nom: 'Coppel (Deuda)', tipo: 'deuda', s: 105, ic: 'fa-store', col: 'text-yellow-500' },
-                { id: 'mama_gral', nom: 'Préstamo Mamá', tipo: 'deuda', s: 17000, ic: 'fa-person-breastfeeding', col: 'text-rose-400' },
-                { id: 'mama_pc', nom: 'Préstamo Mamá (PC)', tipo: 'deuda', s: 15974, ic: 'fa-laptop', col: 'text-rose-300' },
+                { id: 'coppel', nom: 'Coppel (Abono: $105/m)', tipo: 'deuda', s: 624, ic: 'fa-store', col: 'text-yellow-500' },
+                { id: 'mama_gral', nom: 'Préstamo Mamá', tipo: 'deuda', s: 12200, ic: 'fa-person-breastfeeding', col: 'text-rose-400' },
+                { id: 'mama_pc', nom: 'Préstamo Mamá (Mac)', tipo: 'deuda', s: 16000, ic: 'fa-laptop', col: 'text-rose-300' },
                 
-                { id: 'brayan', nom: 'Brayan (Me debe)', tipo: 'cobrar', s: 15000, ic: 'fa-user', col: 'text-orange-500' },
+                { id: 'brayan', nom: 'Brayan (Me debe)', tipo: 'cobrar', s: 14100, ic: 'fa-user', col: 'text-orange-500' },
                 { id: 'telefono', nom: 'Persona Teléfono (Me debe)', tipo: 'cobrar', s: 8000, ic: 'fa-mobile', col: 'text-blue-400' },
                 { id: 'acordeon', nom: 'Acordeón (Me deben)', tipo: 'cobrar', s: 3500, ic: 'fa-music', col: 'text-slate-700' },
                 
@@ -307,13 +307,14 @@
                 { id: 'p4', desc: 'Plan Celular', m: 1832, tipo: 'gasto', o: 'banorte', d: '', cat: 'Servicios', fr: 'men', dia: 4 },
                 { id: 'p5', desc: 'Renta Casa', m: 1850, tipo: 'gasto', o: 'efectivo', d: '', cat: 'Vivienda', fr: 'men', dia: 1 },
                 
-                { id: 'p6', desc: 'Pago PC Mamá', m: 1775, tipo: 'traspaso', o: 'banorte', d: 'mama_pc', cat: 'Equipo', fr: 'men', dia: 1 },
-                { id: 'p7', desc: 'Abono Mamá Gral', m: 1200, tipo: 'traspaso', o: 'banorte', d: 'mama_gral', cat: 'Deudas', fr: 'men', dia: 30 }
+                { id: 'p6', desc: 'Pago Mac Mamá', m: 1775, tipo: 'traspaso', o: 'banorte', d: 'mama_pc', cat: 'Equipo', fr: 'men', dia: 1 },
+                { id: 'p7', desc: 'Abono Mamá Gral', m: 1200, tipo: 'traspaso', o: 'banorte', d: 'mama_gral', cat: 'Deudas', fr: 'men', dia: 30 },
+                { id: 'p8', desc: 'Abono Coppel', m: 105, tipo: 'traspaso', o: 'banorte', d: 'coppel', cat: 'Deudas', fr: 'men', dia: 15 }
             ]
         };
 
         // LLAVES DE VERSIÓN PARA FORZAR EL NUEVO STATE
-        const V = "v6";
+        const V = "v7";
         let st = {
             c: localStorage.getItem(`fr_c_${V}`) ? JSON.parse(localStorage.getItem(`fr_c_${V}`)) : DEFAULTS.cuentas,
             tx: JSON.parse(localStorage.getItem('fr_tx')) || [],
